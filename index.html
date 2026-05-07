@@ -3,17 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AD 智能手套 · Dashboard 入口</title>
+<title data-i18n="index.title">AD 智能手套 · Dashboard 入口</title>
+<link rel="icon" href="assets/i-thread-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/brand.css">
 <style>
 :root {
-  --bg: #f8fafc;
+  --bg: #f6f7fc;
   --card: #ffffff;
   --text: #0f172a;
   --muted: #64748b;
-  --teal: #0f766e;
-  --teal-bg: #f0fdfa;
-  --rose: #be123c;
-  --rose-bg: #fff1f2;
   --border: #e2e8f0;
 }
 * { box-sizing: border-box; }
@@ -24,14 +22,14 @@ body {
   color: var(--text);
   line-height: 1.55;
 }
-header {
-  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+header.hero {
+  background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-deep) 60%, var(--brand-magenta-deep) 100%);
   color: white;
   padding: 56px 24px 64px;
   text-align: center;
 }
-header h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: -0.02em; }
-header p { margin: 0 auto; max-width: 720px; opacity: 0.85; font-size: 15px; }
+header.hero h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: -0.02em; }
+header.hero p { margin: 0 auto; max-width: 720px; opacity: 0.9; font-size: 15px; }
 .wrap { max-width: 980px; margin: 0 auto; padding: 40px 24px 80px; }
 .portal {
   display: grid;
@@ -57,13 +55,13 @@ header p { margin: 0 auto; max-width: 720px; opacity: 0.85; font-size: 15px; }
 .tile .icon { font-size: 36px; }
 .tile h2 { margin: 0; font-size: 22px; }
 .tile p { margin: 0; color: var(--muted); font-size: 14px; }
-.tile.patient { border-top: 4px solid var(--teal); }
-.tile.doctor { border-top: 4px solid var(--rose); }
+.tile.patient { border-top: 4px solid var(--brand-blue); }
+.tile.doctor  { border-top: 4px solid var(--brand-magenta); }
 .tile.realtime { border-top: 4px solid #f59e0b; }
 .tile.realtime .cta { color: #d97706; }
 .tile .demo-badge {
   display: inline-block; font-size: 10px; padding: 2px 8px;
-  background: #fef3c7; color: #92400e; border-radius: 4px;
+  background: var(--brand-blue-bg); color: var(--brand-blue-deep); border-radius: 4px;
   font-weight: 600; margin-left: 6px; vertical-align: middle;
 }
 .tile .live-badge {
@@ -79,8 +77,8 @@ header p { margin: 0 auto; max-width: 720px; opacity: 0.85; font-size: 15px; }
   font-size: 14px;
   padding-top: 12px;
 }
-.tile.patient .cta { color: var(--teal); }
-.tile.doctor .cta { color: var(--rose); }
+.tile.patient .cta { color: var(--brand-blue); }
+.tile.doctor  .cta { color: var(--brand-magenta); }
 .aux {
   margin-top: 32px;
   padding: 18px 22px;
@@ -95,7 +93,7 @@ header p { margin: 0 auto; max-width: 720px; opacity: 0.85; font-size: 15px; }
   flex-wrap: wrap;
 }
 .aux strong { color: var(--text); }
-.aux a { color: var(--teal); text-decoration: none; }
+.aux a { color: var(--brand-blue); text-decoration: none; }
 .aux a:hover { text-decoration: underline; }
 footer {
   margin-top: 48px;
@@ -114,14 +112,14 @@ footer {
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 #rtModal h2 { margin: 0 0 14px; font-size: 20px; }
-#rtModal h3 { margin: 18px 0 6px; font-size: 14px; color: var(--teal); }
+#rtModal h3 { margin: 18px 0 6px; font-size: 14px; color: var(--brand-blue); }
 #rtModal pre {
   background: #0f172a; color: #e2e8f0; padding: 12px 14px;
   border-radius: 6px; font-size: 12px; overflow-x: auto;
   font-family: ui-monospace, monospace; line-height: 1.6;
 }
 #rtModal .openbtn {
-  display: inline-block; background: var(--teal); color: white;
+  display: inline-block; background: var(--brand-blue); color: white;
   padding: 10px 18px; border-radius: 8px; text-decoration: none;
   font-size: 13px; font-weight: 600; margin-top: 12px; margin-right: 8px;
 }
@@ -137,9 +135,25 @@ footer {
 </head>
 <body>
 
-<header>
-  <h1>AD 智能手套 · Dashboard</h1>
-  <p>EDA + PPG + IMU + 麦克风的可穿戴手套，搭配多智能体推理引擎，对阿尔兹海默症患者做实时监测与干预。下面分别是患者端和医生端入口。</p>
+<nav class="brandbar">
+  <a class="brandbar-logo" href="index.html" aria-label="I-THREAD">
+    <img src="assets/i-thread-logo.svg" alt="I-THREAD" />
+  </a>
+  <span class="brandbar-divider"></span>
+  <span class="brandbar-product" data-i18n="brand.glove"></span>
+  <span class="brandbar-tag"     data-i18n="brand.tagline"></span>
+  <div class="brandbar-pills">
+    <a href="index.html"   class="active" data-i18n="nav.home"></a>
+    <a href="patient.html" data-i18n="nav.patient"></a>
+    <a href="doctor.html"  data-i18n="nav.doctor"></a>
+    <a href="index.html"   data-i18n="nav.realtime" data-i18n-title="nav.realtime.tip"></a>
+  </div>
+  <button type="button" class="lang-toggle" data-lang-toggle aria-label="Switch language">中</button>
+</nav>
+
+<header class="hero">
+  <h1 data-i18n="index.h1">AD 智能手套 · Dashboard</h1>
+  <p data-i18n="index.hero">EDA + PPG + IMU + 麦克风的可穿戴手套，搭配多智能体推理引擎，对阿尔兹海默症患者做实时监测与干预。下面分别是患者端和医生端入口。</p>
 </header>
 
 <div class="wrap">
@@ -148,53 +162,52 @@ footer {
 
   <a class="tile patient" href="patient.html">
     <div class="icon">🌿</div>
-    <h2>患者端 <span class="demo-badge">DEMO</span></h2>
-    <p>给本人或家属看。简单、温和，告诉你"今天怎么样"和"接下来该做什么"。</p>
+    <h2><span data-i18n="index.tile.patient.h">患者端</span> <span class="demo-badge" data-i18n="index.demo">DEMO</span></h2>
+    <p data-i18n="index.tile.patient.p">给本人或家属看。简单、温和，告诉你"今天怎么样"和"接下来该做什么"。</p>
     <ul>
-      <li>今日红黄绿状态灯</li>
-      <li>心率、活动、睡眠、心情</li>
-      <li>吃药 / 散步 / 联系家人</li>
-      <li>一键听音乐 / 呼吸放松</li>
+      <li data-i18n="index.tile.patient.l1">今日红黄绿状态灯</li>
+      <li data-i18n="index.tile.patient.l2">心率、活动、睡眠、心情</li>
+      <li data-i18n="index.tile.patient.l3">吃药 / 散步 / 联系家人</li>
+      <li data-i18n="index.tile.patient.l4">一键听音乐 / 呼吸放松</li>
     </ul>
-    <div class="cta">进入患者端 →</div>
+    <div class="cta" data-i18n="index.tile.patient.cta">进入患者端 →</div>
   </a>
 
   <a class="tile doctor" href="doctor.html">
     <div class="icon">🩺</div>
-    <h2>医生端 <span class="demo-badge">DEMO</span></h2>
-    <p>给临床医生看 mock 数据 + Agent 推理。所有卡片可点开看详情。</p>
+    <h2><span data-i18n="index.tile.doctor.h">医生端</span> <span class="demo-badge" data-i18n="index.demo">DEMO</span></h2>
+    <p data-i18n="index.tile.doctor.p">给临床医生看 mock 数据 + Agent 推理。所有卡片可点开看详情。</p>
     <ul>
-      <li>AD 分期 + 置信度（SCD→Severe）</li>
-      <li>HRV / 步态 / EDA / 语音 可点开</li>
-      <li>5 cadence 时间尺度详情</li>
-      <li>实际生成临床/家属周报</li>
+      <li data-i18n="index.tile.doctor.l1">AD 分期 + 置信度（SCD→Severe）</li>
+      <li data-i18n="index.tile.doctor.l2">HRV / 步态 / EDA / 语音 可点开</li>
+      <li data-i18n="index.tile.doctor.l3">5 cadence 时间尺度详情</li>
+      <li data-i18n="index.tile.doctor.l4">实际生成临床/家属周报</li>
     </ul>
-    <div class="cta">进入医生端 →</div>
+    <div class="cta" data-i18n="index.tile.doctor.cta">进入医生端 →</div>
   </a>
 
   <a class="tile realtime" href="javascript:void(0)" onclick="openRealtimeModal()">
     <div class="icon">📡</div>
-    <h2>实时面板 <span class="live-badge">LOCAL</span></h2>
-    <p>给开发/研究自己用。直连本机 backend + ESP32，实时显示真实传感器流。</p>
+    <h2><span data-i18n="index.tile.rt.h">实时面板</span> <span class="live-badge" data-i18n="index.local">本机</span></h2>
+    <p data-i18n="index.tile.rt.p">给开发/研究自己用。直连本机 backend + ESP32，实时显示真实传感器流。</p>
     <ul>
-      <li>真实 USB Serial / BLE / WiFi 数据</li>
-      <li>多通道实时波形（陈哲做的）</li>
-      <li>录制 / 回放 / Claude AI 聊天</li>
-      <li>需要本机跑 backend，点查看说明</li>
+      <li data-i18n="index.tile.rt.l1">真实 USB Serial / BLE / WiFi 数据</li>
+      <li data-i18n="index.tile.rt.l2">多通道实时波形（陈哲做的）</li>
+      <li data-i18n="index.tile.rt.l3">录制 / 回放 / Claude AI 聊天</li>
+      <li data-i18n="index.tile.rt.l4">需要本机跑 backend，点查看说明</li>
     </ul>
-    <div class="cta">查看本机运行说明 →</div>
+    <div class="cta" data-i18n="index.tile.rt.cta">查看本机运行说明 →</div>
   </a>
 
 </div>
 
 <div class="aux">
-  <strong>研究背景：</strong>
-  本系统的临床知识库、Agent 架构、传感器原理、合成数据校准等技术细节，见
-  <a href="https://jewelina95.github.io/ad-wiki-pages/" target="_blank">AD Wiki ↗</a>。
-  当前页面为可视化原型，数据为脱敏 mock。
+  <strong data-i18n="index.aux.bg">研究背景：</strong>
+  <span><span data-i18n="index.aux.txt">本系统的临床知识库、Agent 架构、传感器原理、合成数据校准等技术细节，见</span>
+  <a href="https://jewelina95.github.io/ad-wiki-pages/" target="_blank" data-i18n="index.aux.link">AD Wiki ↗</a><span data-i18n="index.aux.tail">。当前页面为可视化原型，数据为脱敏 mock。</span></span>
 </div>
 
-<footer>
+<footer data-i18n="index.footer">
   AD 智能手套 · 多智能体监测系统 · 原型 v0.1 · 不可替代医生诊断
 </footer>
 
@@ -202,33 +215,34 @@ footer {
 
 <div id="rtModal" onclick="if(event.target===this) closeRtModal()">
   <div class="panel">
-    <h2>📡 实时面板需要本机运行</h2>
-    <p style="color:var(--muted);font-size:14px">实时 ESP32 传感器数据是 React 应用 + FastAPI backend，无法部署到静态 GitHub Pages。需要在你电脑上跑起来：</p>
+    <h2 data-i18n="index.modal.h">📡 实时面板需要本机运行</h2>
+    <p style="color:var(--muted);font-size:14px" data-i18n="index.modal.lead">实时 ESP32 传感器数据是 React 应用 + FastAPI backend，无法部署到静态 GitHub Pages。需要在你电脑上跑起来：</p>
 
-    <h3>1. Clone 代码</h3>
+    <h3 data-i18n="index.modal.s1">1. Clone 代码</h3>
 <pre>git clone https://github.com/CZ114/ainone-dashboard.git
 cd ainone-dashboard</pre>
 
-    <h3>2. 启动 backend（终端 1）</h3>
+    <h3 data-i18n="index.modal.s2">2. 启动 backend（终端 1）</h3>
 <pre>cd backend
 pip install -r requirements.txt
 python run.py
-# 监听 http://localhost:8000</pre>
+# listening on http://localhost:8000</pre>
 
-    <h3>3. 启动 frontend（终端 2）</h3>
+    <h3 data-i18n="index.modal.s3">3. 启动 frontend（终端 2）</h3>
 <pre>cd frontend
 npm install
 npm run dev
-# 打开 http://localhost:5173</pre>
+# open http://localhost:5173</pre>
 
-    <h3>4. 插上 ESP32 板，访问 /dashboard</h3>
-    <p style="font-size:13px">如果你已经在跑了，点这个直接打开：</p>
-    <a class="openbtn" href="http://localhost:5173/dashboard" target="_blank">打开 localhost:5173/dashboard ↗</a>
-    <a class="openbtn" href="https://github.com/CZ114/ainone-dashboard#readme" target="_blank" style="background:#1c1917">看 README ↗</a>
-    <button class="closebtn" onclick="closeRtModal()">关闭</button>
+    <h3 data-i18n="index.modal.s4">4. 插上 ESP32 板，访问 /dashboard</h3>
+    <p style="font-size:13px" data-i18n="index.modal.if">如果你已经在跑了，点这个直接打开：</p>
+    <a class="openbtn" href="http://localhost:5173/dashboard" target="_blank" data-i18n="index.modal.openbtn">打开 localhost:5173/dashboard ↗</a>
+    <a class="openbtn" href="https://github.com/CZ114/ainone-dashboard#readme" target="_blank" style="background:#1c1917" data-i18n="index.modal.readme">看 README ↗</a>
+    <button class="closebtn" onclick="closeRtModal()" data-i18n="index.modal.close">关闭</button>
   </div>
 </div>
 
+<script src="assets/i18n.js"></script>
 <script>
 function openRealtimeModal() { document.getElementById('rtModal').classList.add('show'); }
 function closeRtModal() { document.getElementById('rtModal').classList.remove('show'); }

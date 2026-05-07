@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>患者端 · AD 智能手套</title>
+<title data-i18n="patient.title">患者端 · AD 智能手套</title>
+<link rel="icon" href="assets/i-thread-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/brand.css">
 <style>
 :root {
-  --bg: #fefce8;
+  --bg: #fbfaf6;
   --card: #ffffff;
   --text: #1c1917;
   --muted: #57534e;
-  --teal: #0f766e;
   --green: #16a34a;
   --green-bg: #dcfce7;
   --yellow: #ca8a04;
@@ -28,25 +29,6 @@ body {
   line-height: 1.6;
   font-size: 16px;
 }
-.nav {
-  background: white;
-  border-bottom: 1px solid var(--border);
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.nav .brand { font-weight: 700; color: var(--teal); }
-.nav .pills { margin-left: auto; display: flex; gap: 8px; }
-.nav .pills a {
-  padding: 6px 14px;
-  border-radius: 999px;
-  text-decoration: none;
-  font-size: 13px;
-  color: var(--muted);
-  border: 1px solid var(--border);
-}
-.nav .pills a.active { background: var(--teal); color: white; border-color: var(--teal); }
 .wrap { max-width: 720px; margin: 0 auto; padding: 24px 20px 80px; }
 
 .hero-status {
@@ -133,7 +115,7 @@ body {
 .todo-item .body .when { color: var(--muted); font-size: 13px; }
 .todo-item .badge {
   font-size: 11px; padding: 2px 8px; border-radius: 999px;
-  background: var(--yellow-bg); color: var(--yellow);
+  background: var(--brand-blue-bg); color: var(--brand-blue);
   font-weight: 600;
 }
 
@@ -150,19 +132,21 @@ body {
   text-align: center;
   cursor: pointer;
   transition: all 0.15s;
+  font-family: inherit;
+  color: inherit;
 }
-.act-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--teal); }
+.act-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--brand-blue); }
 .act-btn .ai { font-size: 28px; }
 .act-btn .at { font-weight: 600; font-size: 14px; margin-top: 6px; }
 .act-btn .as { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
 .summary-card {
-  background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
-  border: 1px solid #99f6e4;
+  background: linear-gradient(135deg, var(--brand-blue-bg) 0%, #f5e8f3 100%);
+  border: 1px solid #c7d2fe;
   border-radius: 14px;
   padding: 20px 22px;
 }
-.summary-card .lbl { font-size: 13px; color: var(--teal); font-weight: 600; }
+.summary-card .lbl { font-size: 13px; color: var(--brand-blue); font-weight: 600; }
 .summary-card .text { font-size: 15px; margin-top: 6px; }
 .summary-card .stat-row {
   display: flex; gap: 18px; margin-top: 12px; flex-wrap: wrap;
@@ -171,7 +155,7 @@ body {
 .summary-card .stat-row strong { color: var(--text); font-size: 15px; }
 
 .emergency {
-  background: var(--red);
+  background: var(--brand-magenta);
   color: white;
   padding: 16px 20px;
   border-radius: 14px;
@@ -186,7 +170,7 @@ body {
   font-weight: 600;
   font-family: inherit;
 }
-.emergency:hover { background: #b91c1c; }
+.emergency:hover { background: var(--brand-magenta-deep); }
 .emergency .ico { font-size: 22px; }
 
 .disclaimer {
@@ -210,153 +194,152 @@ body {
 </head>
 <body>
 
-<nav class="nav">
-  <span class="brand">🧤 AD 手套</span>
-  <div class="pills">
-    <a href="index.html">首页</a>
-    <a href="patient.html" class="active">患者端</a>
-    <a href="doctor.html">医生端</a>
-    <a href="index.html" title="实时面板需本机跑 backend，回首页查看说明">实时（本机）</a>
+<nav class="brandbar">
+  <a class="brandbar-logo" href="index.html" aria-label="I-THREAD">
+    <img src="assets/i-thread-logo.svg" alt="I-THREAD" />
+  </a>
+  <span class="brandbar-divider"></span>
+  <span class="brandbar-product" data-i18n="brand.glove"></span>
+  <span class="brandbar-tag"     data-i18n="brand.tagline"></span>
+  <div class="brandbar-pills">
+    <a href="index.html"   data-i18n="nav.home"></a>
+    <a href="patient.html" class="active" data-i18n="nav.patient"></a>
+    <a href="doctor.html"  data-i18n="nav.doctor"></a>
+    <a href="index.html"   data-i18n="nav.realtime" data-i18n-title="nav.realtime.tip"></a>
   </div>
+  <button type="button" class="lang-toggle" data-lang-toggle aria-label="Switch language">中</button>
 </nav>
 
 <div class="wrap">
 
-  <!-- 红黄绿状态 -->
   <div class="hero-status">
     <div class="light"></div>
-    <h1>今天状态很好</h1>
-    <p>各项指标都在你正常范围内，继续保持。</p>
-    <div class="ts">最近一次评估：今天 09:42（基于过去 24 小时数据）</div>
+    <h1 data-i18n="patient.hero.h">今天状态很好</h1>
+    <p  data-i18n="patient.hero.p">各项指标都在你正常范围内，继续保持。</p>
+    <div class="ts" data-i18n="patient.hero.ts">最近一次评估：今天 09:42（基于过去 24 小时数据）</div>
   </div>
 
-  <!-- 4 个核心指标 -->
-  <div class="section-title">今天的几件小事</div>
+  <div class="section-title" data-i18n="patient.section.today">今天的几件小事</div>
   <div class="metrics">
 
     <div class="metric">
       <span class="icon">❤️</span>
-      <div class="lbl">心率</div>
-      <div class="val">72 <small>次/分</small></div>
-      <div class="delta flat">和平时差不多</div>
+      <div class="lbl" data-i18n="patient.metric.hr.l">心率</div>
+      <div class="val">72 <small data-i18n="patient.metric.hr.u">次/分</small></div>
+      <div class="delta flat" data-i18n="patient.metric.hr.d">和平时差不多</div>
     </div>
 
     <div class="metric">
       <span class="icon">🚶</span>
-      <div class="lbl">活动</div>
-      <div class="val">3,420 <small>步</small></div>
-      <div class="delta up">↑ 比昨天多走了 480 步</div>
+      <div class="lbl" data-i18n="patient.metric.act.l">活动</div>
+      <div class="val">3,420 <small data-i18n="patient.metric.act.u">步</small></div>
+      <div class="delta up" data-i18n="patient.metric.act.d">↑ 比昨天多走了 480 步</div>
     </div>
 
     <div class="metric">
       <span class="icon">🌙</span>
-      <div class="lbl">昨晚睡眠</div>
-      <div class="val">7.2 <small>小时</small></div>
-      <div class="delta up">↑ 睡得比较踏实</div>
+      <div class="lbl" data-i18n="patient.metric.sl.l">昨晚睡眠</div>
+      <div class="val">7.2 <small data-i18n="patient.metric.sl.u">小时</small></div>
+      <div class="delta up" data-i18n="patient.metric.sl.d">↑ 睡得比较踏实</div>
     </div>
 
     <div class="metric">
       <span class="icon">😊</span>
-      <div class="lbl">心情</div>
-      <div class="val">平稳</div>
-      <div class="delta flat">没有明显起伏</div>
+      <div class="lbl" data-i18n="patient.metric.mood.l">心情</div>
+      <div class="val" data-i18n="patient.metric.mood.v">平稳</div>
+      <div class="delta flat" data-i18n="patient.metric.mood.d">没有明显起伏</div>
     </div>
 
   </div>
 
-  <!-- 今日提醒 -->
-  <div class="section-title">今天的提醒</div>
+  <div class="section-title" data-i18n="patient.section.todo">今天的提醒</div>
   <div class="todo-list" id="todoList">
 
     <div class="todo-item done" onclick="toggleTodo(this)">
       <div class="check"></div>
       <div class="body">
-        <div class="t">早上的药 💊</div>
-        <div class="when">已经按时吃啦 · 08:00</div>
+        <div class="t" data-i18n="patient.todo.1.t">早上的药 💊</div>
+        <div class="when" data-i18n="patient.todo.1.w">已经按时吃啦 · 08:00</div>
       </div>
     </div>
 
     <div class="todo-item" onclick="toggleTodo(this)">
       <div class="check"></div>
       <div class="body">
-        <div class="t">午饭后散散步 🌳</div>
-        <div class="when">建议时间：13:30 · 20 分钟左右就够</div>
+        <div class="t" data-i18n="patient.todo.2.t">午饭后散散步 🌳</div>
+        <div class="when" data-i18n="patient.todo.2.w">建议时间：13:30 · 20 分钟左右就够</div>
       </div>
-      <span class="badge">推荐</span>
+      <span class="badge" data-i18n="patient.todo.2.b">推荐</span>
     </div>
 
     <div class="todo-item" onclick="toggleTodo(this)">
       <div class="check"></div>
       <div class="body">
-        <div class="t">下午 4 点女儿要来 👨‍👩‍👧</div>
-        <div class="when">提前听几首老歌，放松一下心情</div>
+        <div class="t" data-i18n="patient.todo.3.t">下午 4 点女儿要来 👨‍👩‍👧</div>
+        <div class="when" data-i18n="patient.todo.3.w">提前听几首老歌，放松一下心情</div>
       </div>
     </div>
 
     <div class="todo-item" onclick="toggleTodo(this)">
       <div class="check"></div>
       <div class="body">
-        <div class="t">晚上的药 💊</div>
-        <div class="when">提醒时间：19:00</div>
+        <div class="t" data-i18n="patient.todo.4.t">晚上的药 💊</div>
+        <div class="when" data-i18n="patient.todo.4.w">提醒时间：19:00</div>
       </div>
     </div>
 
   </div>
 
-  <!-- 快捷操作 -->
-  <div class="section-title">需要的时候点一下</div>
+  <div class="section-title" data-i18n="patient.section.act">需要的时候点一下</div>
   <div class="actions">
 
-    <button class="act-btn" onclick="showToast('正在播放您喜欢的老歌…')">
+    <button class="act-btn" onclick="showToast(I18N.t('patient.act.music.toast'))">
       <div class="ai">🎵</div>
-      <div class="at">听音乐</div>
-      <div class="as">舒缓 / 怀旧</div>
+      <div class="at" data-i18n="patient.act.music.t">听音乐</div>
+      <div class="as" data-i18n="patient.act.music.s">舒缓 / 怀旧</div>
     </button>
 
-    <button class="act-btn" onclick="showToast('开始 5 分钟深呼吸引导')">
+    <button class="act-btn" onclick="showToast(I18N.t('patient.act.breath.toast'))">
       <div class="ai">🌬️</div>
-      <div class="at">深呼吸</div>
-      <div class="as">5 分钟</div>
+      <div class="at" data-i18n="patient.act.breath.t">深呼吸</div>
+      <div class="as" data-i18n="patient.act.breath.s">5 分钟</div>
     </button>
 
-    <button class="act-btn" onclick="showToast('正在拨号给：女儿（小芳）…')">
+    <button class="act-btn" onclick="showToast(I18N.t('patient.act.call.toast'))">
       <div class="ai">📞</div>
-      <div class="at">打电话</div>
-      <div class="as">给家人</div>
+      <div class="at" data-i18n="patient.act.call.t">打电话</div>
+      <div class="as" data-i18n="patient.act.call.s">给家人</div>
     </button>
 
   </div>
 
-  <!-- 本周一句话 -->
-  <div class="section-title">这一周</div>
+  <div class="section-title" data-i18n="patient.section.week">这一周</div>
   <div class="summary-card">
-    <div class="lbl">📊 本周整体</div>
-    <div class="text">这周睡眠和活动都比上周好，心率也稳定。家属来访的那两天心情格外舒展。</div>
+    <div class="lbl" data-i18n="patient.week.lbl">📊 本周整体</div>
+    <div class="text" data-i18n="patient.week.txt">这周睡眠和活动都比上周好，心率也稳定。家属来访的那两天心情格外舒展。</div>
     <div class="stat-row">
-      <span><strong>5/7</strong> 天按时吃药</span>
-      <span><strong>21,840</strong> 步</span>
-      <span>平均睡眠 <strong>6.9</strong> 小时</span>
+      <span><strong>5/7</strong><span data-i18n="patient.week.s1.suf"> 天按时吃药</span></span>
+      <span><strong>21,840</strong><span data-i18n="patient.week.s2.suf"> 步</span></span>
+      <span><span data-i18n="patient.week.s3.pre">平均睡眠 </span><strong>6.9</strong><span data-i18n="patient.week.s3.suf"> 小时</span></span>
     </div>
   </div>
 
-  <!-- 紧急按钮 -->
-  <button class="emergency" onclick="showToast('已通知主治医生和紧急联系人')">
+  <button class="emergency" onclick="showToast(I18N.t('patient.emergency.toast'))">
     <span class="ico">🚨</span>
-    <span>不舒服？一键通知医生和家人</span>
+    <span data-i18n="patient.emergency">不舒服？一键通知医生和家人</span>
   </button>
 
   <div class="disclaimer">
-    <strong>提示：</strong>这里看到的都是手套实时记录的数据，仅供日常参考，不能替代医生的诊断。如果连续几天感觉不一样，请告诉医生。
+    <strong data-i18n="patient.disclaimer">提示：</strong><span data-i18n="patient.disclaimer.txt">这里看到的都是手套实时记录的数据，仅供日常参考，不能替代医生的诊断。如果连续几天感觉不一样，请告诉医生。</span>
   </div>
 
 </div>
 
 <div id="toast"></div>
 
+<script src="assets/i18n.js"></script>
 <script>
-function toggleTodo(el) {
-  el.classList.toggle('done');
-}
+function toggleTodo(el) { el.classList.toggle('done'); }
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');

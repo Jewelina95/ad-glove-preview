@@ -3,26 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>医生端 · AD 智能手套</title>
+<title data-i18n="doctor.title">医生端 · AD 智能手套</title>
+<link rel="icon" href="assets/i-thread-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/brand.css">
 <style>
 :root {
-  --bg: #f8fafc;
+  --bg: #f6f7fc;
   --card: #ffffff;
   --text: #0f172a;
   --muted: #64748b;
-  --teal: #0f766e;
-  --teal-bg: #f0fdfa;
+  /* logo blue family — replaces former teal */
+  --teal: #1e3a8a;
+  --teal-bg: #eef0ff;
   --border: #e2e8f0;
   --green: #16a34a;
   --green-bg: #dcfce7;
   --yellow: #ca8a04;
   --yellow-bg: #fef9c3;
-  --orange: #ea580c;
-  --orange-bg: #ffedd5;
+  /* logo magenta family — replaces former orange-as-active and rose */
+  --orange: #ec008c;
+  --orange-bg: #fdebf6;
   --red: #dc2626;
   --red-bg: #fee2e2;
   --purple: #7c3aed;
   --purple-bg: #f5f3ff;
+  --rose: #ec008c;
 }
 * { box-sizing: border-box; }
 body {
@@ -33,22 +38,7 @@ body {
   line-height: 1.5;
   font-size: 14px;
 }
-.nav {
-  background: white;
-  border-bottom: 1px solid var(--border);
-  padding: 12px 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.nav .brand { font-weight: 700; color: var(--teal); }
-.nav .pills { margin-left: auto; display: flex; gap: 8px; }
-.nav .pills a {
-  padding: 6px 14px; border-radius: 999px;
-  text-decoration: none; font-size: 13px; color: var(--muted);
-  border: 1px solid var(--border);
-}
-.nav .pills a.active { background: var(--rose, #be123c); color: white; border-color: var(--rose, #be123c); }
+/* legacy .nav rules retained for backwards compat — actual nav is .brandbar from brand.css */
 
 .layout {
   display: grid;
@@ -541,33 +531,39 @@ body {
 </head>
 <body>
 
-<nav class="nav">
-  <span class="brand">🧤 AD 手套</span>
-  <div class="pills">
-    <a href="index.html">首页</a>
-    <a href="patient.html">患者端</a>
-    <a href="doctor.html" class="active" style="background:#be123c;color:white;border-color:#be123c">医生端</a>
-    <a href="index.html" title="实时面板需本机跑 backend，回首页查看说明">实时（本机）</a>
+<nav class="brandbar">
+  <a class="brandbar-logo" href="index.html" aria-label="I-THREAD">
+    <img src="assets/i-thread-logo.svg" alt="I-THREAD" />
+  </a>
+  <span class="brandbar-divider"></span>
+  <span class="brandbar-product" data-i18n="brand.glove"></span>
+  <span class="brandbar-tag"     data-i18n="brand.tagline"></span>
+  <div class="brandbar-pills">
+    <a href="index.html"   data-i18n="nav.home"></a>
+    <a href="patient.html" data-i18n="nav.patient"></a>
+    <a href="doctor.html"  class="active" data-i18n="nav.doctor"></a>
+    <a href="index.html"   data-i18n="nav.realtime" data-i18n-title="nav.realtime.tip"></a>
   </div>
+  <button type="button" class="lang-toggle" data-lang-toggle aria-label="Switch language">中</button>
 </nav>
 
 <div class="layout">
 
   <!-- ===== 左侧：患者列表 ===== -->
   <aside class="sidebar">
-    <h3>患者列表 (4 案例)</h3>
-    <input class="search" placeholder="🔍 搜索 ID / 姓名" />
+    <h3 data-i18n="doctor.sidebar.h">患者列表 (4 案例)</h3>
+    <input class="search" data-i18n-placeholder="doctor.sidebar.search" placeholder="🔍 搜索 ID / 姓名" />
 
     <div id="patientList"></div>
 
     <div style="margin-top:14px; padding:10px 12px; background:#faf5ff; border:1px dashed #c4b5fd; border-radius:8px;">
-      <div style="font-size:11px;color:#6b21a8;font-weight:600;margin-bottom:6px">📤 上传你的 progression.csv</div>
+      <div style="font-size:11px;color:#6b21a8;font-weight:600;margin-bottom:6px" data-i18n="doctor.sidebar.upload">📤 上传你的 progression.csv</div>
       <input type="file" id="customCsv" accept=".csv" onchange="handleCustomUpload(event)" style="font-size:11px;width:100%">
-      <div style="font-size:10px;color:var(--muted);margin-top:4px">从 ad-synthetic-generator 或自己的纵向数据导入</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px" data-i18n="doctor.sidebar.uploadHint">从 ad-synthetic-generator 或自己的纵向数据导入</div>
     </div>
 
     <div style="margin-top:14px; padding:10px 12px; background:var(--bg); border-radius:8px; font-size:11px; color:var(--muted)">
-      <strong style="color:var(--text)">数据来源：</strong><br>
+      <strong style="color:var(--text)" data-i18n="doctor.sidebar.sources">数据来源：</strong><br>
       🧠 MIND = <a href="https://github.com/Jewelina95/ad-mind-pipeline" target="_blank" style="color:var(--teal)">ad-mind-pipeline</a><br>
       📚 WIKI = <a href="https://jewelina95.github.io/ad-wiki-pages/" target="_blank" style="color:var(--teal)">ad-wiki-pages KB</a>
     </div>
@@ -586,14 +582,39 @@ body {
 <div id="modal" onclick="if(event.target===this) closeModal()">
   <div class="panel">
     <div class="panel-head">
-      <span class="title" id="modalTitle">详情</span>
-      <button class="x" onclick="closeModal()">关闭 ✕</button>
+      <span class="title" id="modalTitle" data-i18n="doctor.modal.title">详情</span>
+      <button class="x" onclick="closeModal()" data-i18n="doctor.modal.close">关闭 ✕</button>
     </div>
     <div class="panel-body" id="modalBody"></div>
   </div>
 </div>
 
+<script src="assets/i18n.js"></script>
 <script>
+// ===== i18n helper =====
+const t = (k) => (window.I18N ? window.I18N.t(k) : k);
+const isEN = () => (window.I18N && window.I18N.getLang() === 'en');
+
+// Re-render hook called by i18n.js when the user toggles language.
+// We re-render the static panels but leave currently fetched mind data alone.
+window.onLangChange = function () {
+  // Sidebar list
+  if (typeof renderPatientList === 'function') renderPatientList();
+  // Re-run the active patient view
+  if (typeof customPatient !== 'undefined' && customPatient) {
+    renderCustomPatient();
+  } else if (typeof currentMindId !== 'undefined' && currentMindId && mindCache[currentMindId]) {
+    renderCurrentView(currentMindId, mindCache[currentMindId]);
+  } else if (typeof PATIENTS !== 'undefined' && document.querySelector('.patient-bar')) {
+    // demo patients use selectPatient — but selectMindPatient is the default flow.
+    // Fall back to last selected demo card if any.
+    const active = document.querySelector('.patient-card.active');
+    if (active && active.dataset.id && PATIENTS[active.dataset.id]) {
+      selectPatient(active.dataset.id);
+    }
+  }
+};
+
 // ===== Mock 患者数据 =====
 const PATIENTS = {
   "P001": {
@@ -928,17 +949,30 @@ let currentMindId = null;
 let customPatient = null;
 
 // ===== 渲染患者列表 =====
+const PATIENT_LABEL_EN = {
+  "P01": "Linear decline · moderate reserve",
+  "P02": "Stepwise · low education",
+  "P03": "Plateau · high reserve",
+  "P04": "Fluctuating · female"
+};
 function renderPatientList() {
   const list = document.getElementById('patientList');
+  const en = isEN();
   const html = Object.entries(MIND_PATIENTS_META).map(([id, m]) => {
     const badge = m.pipeline === 'full'
       ? '<span style="font-size:9px;background:#dcfce7;color:#14532d;padding:1px 5px;border-radius:3px;font-weight:600">FULL</span>'
       : '<span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px;font-weight:600">RAW</span>';
+    const sex = en ? m.sex : (m.sex === 'M' ? '男' : '女');
+    const age = en ? `${m.age}y` : `${m.age}岁`;
+    const edu = en ? `Edu ${m.edu}y` : `教育${m.edu}年`;
+    const label = en ? (PATIENT_LABEL_EN[id] || m.label) : m.label;
+    const days = en ? "30 days" : "30天";
+    const bpsdSuffix = en ? ` BPSD events` : `次`;
     return `
       <div class="patient-card" data-id="${id}" onclick="selectMindPatient('${id}')">
         <div class="name">${id} ${badge}</div>
-        <div class="meta">${m.age}岁 ${m.sex} · 教育${m.edu}年</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">${m.label} · BPSD ${m.bpsd}次 · 30天</div>
+        <div class="meta">${age} ${sex} · ${edu}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${label} · ${en ? `${m.bpsd} BPSD` : `BPSD ${m.bpsd}次`} · ${days}</div>
       </div>
     `;
   }).join('');
@@ -951,13 +985,13 @@ async function selectMindPatient(id) {
   document.querySelectorAll('.patient-card').forEach(el => el.classList.toggle('active', el.dataset.id === id));
   if (sensorTimer) clearInterval(sensorTimer);
   currentMindId = id;
-  main.innerHTML = '<div style="padding:60px;text-align:center;color:var(--muted)"><div style="font-size:32px">⏳</div><div style="margin-top:10px">从 ad-mind-pipeline + ad-wiki-pages 实时拉取 ' + id + ' …</div></div>';
+  main.innerHTML = '<div style="padding:60px;text-align:center;color:var(--muted)"><div style="font-size:32px">⏳</div><div style="margin-top:10px">' + t('doctor.loading') + ' ' + id + ' …</div></div>';
 
   try {
     const data = await fetchMindPatient(id);
     renderCurrentView(id, data);
   } catch (e) {
-    main.innerHTML = `<div style="padding:30px"><div class="alert-banner">加载失败：${e.message}<br>请确认 https://github.com/Jewelina95/ad-mind-pipeline 是 public</div></div>`;
+    main.innerHTML = `<div style="padding:30px"><div class="alert-banner">${t('doctor.loadFail')}${e.message}<br>${t('doctor.loadFail.hint')}</div></div>`;
   }
 }
 
@@ -995,30 +1029,38 @@ function renderRawOnlyView(id, data) {
   const lastEma = ema.length ? ema[ema.length - 1] : null;
   const today = new Date().toISOString().slice(0,10);
 
+  const en = isEN();
+  const sex = en ? meta.sex : (meta.sex === 'M' ? '男' : '女');
+  const pmeta = en
+    ? `${meta.age}y ${sex} · Education ${meta.edu}y · progression: <code>${meta.pattern}</code> · 30-day longitudinal`
+    : `${meta.age}岁 ${sex} · 教育 ${meta.edu} 年 · 进展模式: <code>${meta.pattern}</code> · 30 天纵向`;
+
   document.getElementById('mainPanel').innerHTML = `
     ${renderViewTabs(id)}
     <div class="patient-bar">
       <div>
-        <div class="pname">${id} <span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;margin-left:6px">⚠ Raw data only</span></div>
-        <div class="pmeta">${meta.age}岁 ${meta.sex === 'M' ? '男' : '女'} · 教育 ${meta.edu} 年 · 进展模式: <code>${meta.pattern}</code> · 30 天纵向</div>
+        <div class="pname">${id} <span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;margin-left:6px">⚠ ${en ? 'Raw data only' : '仅原始数据'}</span></div>
+        <div class="pmeta">${pmeta}</div>
       </div>
       <div class="stat">
         <div class="v">${ema.length}</div>
-        <div class="l">EMA 条数</div>
+        <div class="l">${en ? 'EMA entries' : 'EMA 条数'}</div>
       </div>
       <div class="stat">
         <div class="v">${bpsd.length}</div>
-        <div class="l">BPSD 事件</div>
+        <div class="l">${en ? 'BPSD events' : 'BPSD 事件'}</div>
       </div>
       <div class="stat">
         <div class="v">${notes.length}</div>
-        <div class="l">临床 Notes</div>
+        <div class="l">${en ? 'Clinical notes' : '临床 Notes'}</div>
       </div>
     </div>
 
     <div class="alert-banner warn">
-      ⚠️ <strong>ad-mind-pipeline 还没对 ${id} 跑完整流程</strong> — 缺少 dashboard.json / insights_clinical / insights_physio / insights_behavior。当前显示原始 raw 数据。
-      <a href="https://github.com/Jewelina95/ad-mind-pipeline#readme" target="_blank" style="color:inherit;text-decoration:underline;margin-left:8px">查看如何运行 pipeline ↗</a>
+      ⚠️ <strong>${en ? `ad-mind-pipeline has not run a full pipeline for ${id}` : `ad-mind-pipeline 还没对 ${id} 跑完整流程`}</strong> — ${en
+        ? 'dashboard.json / insights_clinical / insights_physio / insights_behavior are missing. Showing raw data only.'
+        : '缺少 dashboard.json / insights_clinical / insights_physio / insights_behavior。当前显示原始 raw 数据。'}
+      <a href="https://github.com/Jewelina95/ad-mind-pipeline#readme" target="_blank" style="color:inherit;text-decoration:underline;margin-left:8px">${en ? 'How to run the pipeline ↗' : '查看如何运行 pipeline ↗'}</a>
     </div>
 
     ${renderRealtimeBoard(id)}
@@ -1106,40 +1148,51 @@ function renderCadenceRow(id, data) {
   const lastEma = ema.length ? ema[ema.length - 1] : null;
   const day30Alert = data.dashboard.alert_level;
 
+  const en = isEN();
   // 每个 cadence 的预览文字
   const cads = [
     {
-      k: '1h', ic: '⏱', label: '小时报告 · Hourly',
-      summary: lastEma ? `mood ${lastEma.mood ?? '-'} · anxiety ${lastEma.anxiety ?? '-'} · sleep ${lastEma.sleep ?? '-'}` : '待采集 EMA',
+      k: '1h', ic: '⏱', label: en ? 'Hourly' : '小时报告 · Hourly',
+      summary: lastEma ? `mood ${lastEma.mood ?? '-'} · anxiety ${lastEma.anxiety ?? '-'} · sleep ${lastEma.sleep ?? '-'}` : (en ? 'awaiting EMA' : '待采集 EMA'),
       level: lastEma && (lastEma.mood < 4 || lastEma.anxiety > 6) ? 'warn' : 'ok'
     },
     {
-      k: '7d', ic: '📊', label: '周报 · Weekly',
-      summary: bpsd.length > 0 ? `本周末 ${bpsd.slice(-1)[0].type || 'BPSD'} · ${c.intervention_priority?.length || 0} 项干预` : '稳定',
+      k: '7d', ic: '📊', label: en ? 'Weekly' : '周报 · Weekly',
+      summary: bpsd.length > 0
+        ? (en ? `Latest: ${bpsd.slice(-1)[0].type || 'BPSD'} · ${c.intervention_priority?.length || 0} interventions` : `本周末 ${bpsd.slice(-1)[0].type || 'BPSD'} · ${c.intervention_priority?.length || 0} 项干预`)
+        : (en ? 'stable' : '稳定'),
       level: bpsd.length > 1 ? 'warn' : 'ok'
     },
     {
-      k: '30d', ic: '📈', label: '月报 · Monthly',
-      summary: `${c.stage_inclination} · 置信 ${(c.stage_confidence*100).toFixed(0)}%`,
+      k: '30d', ic: '📈', label: en ? 'Monthly' : '月报 · Monthly',
+      summary: `${c.stage_inclination} · ${en ? 'conf' : '置信'} ${(c.stage_confidence*100).toFixed(0)}%`,
       level: day30Alert === 'red' ? 'alert' : day30Alert === 'yellow' ? 'warn' : 'ok'
     }
   ];
 
-  const frameworkLabel = currentMindView === 'wiki' ? '📚 WIKI 风' : '🧠 MIND 风';
-  const frameworkColor = currentMindView === 'wiki' ? 'var(--teal)' : '#7c3aed';
+  const frameworkLabel = currentMindView === 'wiki'
+    ? (en ? '📚 WIKI-style' : '📚 WIKI 风')
+    : (en ? '🧠 MIND-style' : '🧠 MIND 风');
+  const frameworkColor = currentMindView === 'wiki' ? 'var(--brand-blue)' : '#7c3aed';
+  const sectionTitle = en ? 'Three-tier report' : '三层报告';
+  const sectionDesc = en
+    ? 'One dataset · 3 time-scales · click to expand the full SOAP'
+    : '同一份数据 · 3 个时间尺度的不同结构化汇报 · 点击展开完整内容';
+  const ctaTxt = en ? '→ Open full report' : '→ 查看完整报告';
+  const lvBadge = (lv) => lv === 'alert' ? (en ? 'urgent' : '急') : lv === 'warn' ? (en ? 'watch' : '关注') : 'OK';
 
   return `
     <div class="section">
-      <h2>📋 ${frameworkLabel} 三层报告 <span class="desc">同一份数据 · 3 个时间尺度的不同结构化汇报 · 点击展开完整内容</span></h2>
+      <h2>📋 ${frameworkLabel} ${sectionTitle} <span class="desc">${sectionDesc}</span></h2>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
         ${cads.map(cd => `
           <div class="cad ${cd.level}" onclick="openMindCadenceReport('${id}','${cd.k}')" style="text-align:left;padding:14px;border-width:2px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
               <span style="font-size:13px;font-weight:700;color:${frameworkColor}">${cd.ic} ${cd.label}</span>
-              <span style="font-size:10px;background:${cd.level==='alert'?'#fee2e2':cd.level==='warn'?'#fef3c7':'#dcfce7'};color:${cd.level==='alert'?'#7f1d1d':cd.level==='warn'?'#713f12':'#14532d'};padding:1px 6px;border-radius:3px">${cd.level==='alert'?'急':cd.level==='warn'?'关注':'OK'}</span>
+              <span style="font-size:10px;background:${cd.level==='alert'?'#fee2e2':cd.level==='warn'?'#fef3c7':'#dcfce7'};color:${cd.level==='alert'?'#7f1d1d':cd.level==='warn'?'#713f12':'#14532d'};padding:1px 6px;border-radius:3px">${lvBadge(cd.level)}</span>
             </div>
             <div style="font-size:11px;color:var(--muted);line-height:1.5">${cd.summary}</div>
-            <div style="font-size:10px;color:${frameworkColor};margin-top:8px;font-weight:600">→ 查看完整报告</div>
+            <div style="font-size:10px;color:${frameworkColor};margin-top:8px;font-weight:600">${ctaTxt}</div>
           </div>
         `).join('')}
       </div>
@@ -1149,9 +1202,16 @@ function renderCadenceRow(id, data) {
 
 // 实时传感器板（DEMO）— 永远显示
 function renderRealtimeBoard(id) {
+  const en = isEN();
+  const desc = en
+    ? `8 channels · scrolling waveforms · ${id ? `Patient ${id}` : ''}`
+    : `8 通道 · 滚动波形 · ${id ? `Patient ${id}` : ''}`;
+  const helpTxt = en
+    ? `Real data needs a local backend + ESP32 (<a href="index.html" style="color:#fbbf24">setup ↗</a>)`
+    : `真实数据需本机 backend + ESP32 (<a href="index.html" style="color:#fbbf24">查看说明</a>)`;
   return `
     <div class="section" style="padding:14px 16px">
-      <h2>📡 实时传感器板 <span class="desc">8 通道 · 滚动波形 · ${id ? `Patient ${id}` : ''}</span>
+      <h2>📡 ${en ? 'Live sensor board' : '实时传感器板'} <span class="desc">${desc}</span>
         <span class="badge" style="background:#fef3c7;color:#854d0e;margin-left:auto;border:1px solid #f59e0b">⚠ DEMO</span>
       </h2>
       <div class="sensor-board-head">
@@ -1159,11 +1219,11 @@ function renderRealtimeBoard(id) {
         <span class="sep">|</span>
         <span class="sr">50 Hz</span>
         <span class="sep">|</span>
-        <span>Patient: <span class="pid">${id || '-'}</span></span>
+        <span>${en ? 'Subject' : '受试者'}: <span class="pid">${id || '-'}</span></span>
         <span class="sep">|</span>
         <span id="sbClock">${new Date().toTimeString().slice(0,8)}</span>
         <span class="sep">|</span>
-        <span style="color:#94a3b8;font-size:11px">真实数据需本机 backend + ESP32 (<a href="index.html" style="color:#fbbf24">查看说明</a>)</span>
+        <span style="color:#94a3b8;font-size:11px">${helpTxt}</span>
       </div>
       <div class="channel-grid" id="channelGrid">
         ${CHANNELS.map(c => `
@@ -1411,12 +1471,18 @@ function openMindCadenceReport(id, cadence) {
 
 // 顶部框架对比 tab
 function renderViewTabs(id) {
+  const en = isEN();
+  const mindLabel = en ? '🧠 MIND view'  : '🧠 MIND 视角';
+  const wikiLabel = en ? '📚 WIKI view'  : '📚 WIKI 视角';
+  const desc = en
+    ? 'Same data · two clinical frameworks side by side · live from GitHub'
+    : '同一份数据 · 两种框架并排对比 · 实时从 GitHub 拉取';
   return `
     <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;background:white;border:1px solid var(--border);border-radius:10px;padding:6px;">
-      <button class="btn ${currentMindView==='mind'?'primary':''}" style="${currentMindView==='mind'?'background:#7c3aed;border-color:#7c3aed':''};font-weight:600" onclick="switchMindView('mind')">🧠 MIND 视角</button>
-      <button class="btn ${currentMindView==='wiki'?'primary':''}" style="${currentMindView==='wiki'?'background:#0f766e;border-color:#0f766e':''};font-weight:600" onclick="switchMindView('wiki')">📚 WIKI 视角</button>
+      <button class="btn ${currentMindView==='mind'?'primary':''}" style="${currentMindView==='mind'?'background:#7c3aed;border-color:#7c3aed':''};font-weight:600" onclick="switchMindView('mind')">${mindLabel}</button>
+      <button class="btn ${currentMindView==='wiki'?'primary':''}" style="${currentMindView==='wiki'?'background:var(--brand-blue);border-color:var(--brand-blue)':''};font-weight:600" onclick="switchMindView('wiki')">${wikiLabel}</button>
       <span style="flex:1"></span>
-      <span style="font-size:11px;color:var(--muted);padding-right:8px">同一份数据 · 两种框架并排对比 · 实时从 GitHub 拉取</span>
+      <span style="font-size:11px;color:var(--muted);padding-right:8px">${desc}</span>
     </div>
   `;
 }
@@ -1428,25 +1494,30 @@ function renderMindView(id, data) {
   const alertColor = d.alert_level;
   const alertBgClass = alertColor === 'red' ? 'alert-banner' : alertColor === 'yellow' ? 'alert-banner warn' : 'alert-banner ok';
   const alertEmoji = alertColor === 'red' ? '🔴' : alertColor === 'yellow' ? '🟡' : '🟢';
+  const en = isEN();
+  const sex = en ? meta.sex : (meta.sex === 'M' ? '男' : '女');
+  const pmeta = en
+    ? `${meta.age}y ${sex} · Education ${meta.edu}y · progression: <code>${meta.pattern}</code> · 30-day longitudinal`
+    : `${meta.age}岁 ${meta.sex} · 教育 ${meta.edu} 年 · 进展模式: <code>${meta.pattern}</code> · 30 天纵向`;
 
   document.getElementById('mainPanel').innerHTML = `
     ${renderViewTabs(id)}
     <div class="patient-bar">
       <div>
         <div class="pname">${id} <span style="font-size:11px;background:#f5f3ff;color:#7c3aed;padding:2px 8px;border-radius:4px;margin-left:6px">🧠 MIND Pipeline</span></div>
-        <div class="pmeta">${meta.age}岁 ${meta.sex} · 教育 ${meta.edu} 年 · 进展模式: <code>${meta.pattern}</code> · 30 天纵向</div>
+        <div class="pmeta">${pmeta}</div>
       </div>
       <div class="stat">
         <div class="v" style="color:#7c3aed">${c.stage_inclination}</div>
-        <div class="l">分期倾向 (ClinicalAgent)</div>
+        <div class="l">${en ? 'Stage tendency (ClinicalAgent)' : '分期倾向 (ClinicalAgent)'}</div>
       </div>
       <div class="stat">
         <div class="v">${(c.stage_confidence*100).toFixed(0)}%</div>
-        <div class="l">置信度</div>
+        <div class="l">${en ? 'Confidence' : '置信度'}</div>
       </div>
       <div class="stat">
-        <div class="v">${c.gold_standard_referral === 'yes' ? '✓ 推荐' : '观察'}</div>
-        <div class="l">金标准转诊</div>
+        <div class="v">${c.gold_standard_referral === 'yes' ? (en ? '✓ Recommended' : '✓ 推荐') : (en ? 'Observe' : '观察')}</div>
+        <div class="l">${en ? 'Gold-standard referral' : '金标准转诊'}</div>
       </div>
     </div>
 
@@ -1459,13 +1530,13 @@ function renderMindView(id, data) {
     ${renderRealtimeBoard(id)}
 
     <div class="section">
-      <h2>📋 病史 / 上次评估</h2>
-      <p style="margin:6px 0;font-size:13px"><strong>病史：</strong>${d.medical_history}</p>
-      <p style="margin:6px 0;font-size:13px"><strong>近期 Notes：</strong>${d.session_recap}</p>
+      <h2>📋 ${en ? 'History / last visit' : '病史 / 上次评估'}</h2>
+      <p style="margin:6px 0;font-size:13px"><strong>${en ? 'History:' : '病史：'}</strong>${d.medical_history}</p>
+      <p style="margin:6px 0;font-size:13px"><strong>${en ? 'Recent notes:' : '近期 Notes：'}</strong>${d.session_recap}</p>
     </div>
 
     <div class="section">
-      <h2>🔍 Patient Data Insights <span class="desc">PhysioAgent + BehaviorAgent + ClinicalAgent 综合 → Narrator</span></h2>
+      <h2>🔍 Patient Data Insights <span class="desc">PhysioAgent + BehaviorAgent + ClinicalAgent → Narrator</span></h2>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         ${d.patient_data_insights.map(ins => `
           <div class="modal-block ${ins.alert==='red'?'flag-alert':ins.alert==='yellow'?'flag-warn':''}" style="cursor:default">
@@ -1478,7 +1549,7 @@ function renderMindView(id, data) {
     </div>
 
     <div class="section">
-      <h2>💊 今日干预建议 <span class="desc">ClinicalAgent intervention_priority</span></h2>
+      <h2>💊 ${en ? 'Today\'s interventions' : '今日干预建议'} <span class="desc">ClinicalAgent intervention_priority</span></h2>
       ${d.interventions_today.map(iv => `
         <div style="padding:10px 12px;border-left:3px solid ${iv.urgency==='now'?'var(--red)':'var(--yellow)'};background:${iv.urgency==='now'?'var(--red-bg)':'var(--yellow-bg)'};border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px">
           <span style="font-weight:600">${iv.type}</span>
@@ -1489,22 +1560,24 @@ function renderMindView(id, data) {
     </div>
 
     <div class="section">
-      <h2>⚠️ 鉴别诊断关注</h2>
+      <h2>⚠️ ${en ? 'Differential to consider' : '鉴别诊断关注'}</h2>
       <ul style="padding-left:20px;font-size:13px">
         ${d.differential_concern.map(x => `<li style="margin:4px 0">${x}</li>`).join('')}
       </ul>
     </div>
 
     <div class="section">
-      <h2>处置</h2>
+      <h2>${en ? 'Actions' : '处置'}</h2>
       <div class="action-row">
-        <button class="btn primary" onclick="openMindReportModal('${id}')">📄 查看完整 report.md</button>
-        ${c.gold_standard_referral === 'yes' ? `<button class="btn warn" onclick="openMindReferralModal('${id}')">🩺 转诊建议详情</button>` : ''}
-        <button class="btn" onclick="window.open('https://github.com/Jewelina95/ad-mind-pipeline/tree/main/data_v2/${id}','_blank')">📂 GitHub 源数据 ↗</button>
-        <button class="btn" onclick="window.location.href='index.html'">📡 实时面板（本机）</button>
+        <button class="btn primary" onclick="openMindReportModal('${id}')">📄 ${en ? 'Full report.md' : '查看完整 report.md'}</button>
+        ${c.gold_standard_referral === 'yes' ? `<button class="btn warn" onclick="openMindReferralModal('${id}')">🩺 ${en ? 'Referral details' : '转诊建议详情'}</button>` : ''}
+        <button class="btn" onclick="window.open('https://github.com/Jewelina95/ad-mind-pipeline/tree/main/data_v2/${id}','_blank')">📂 ${en ? 'GitHub source ↗' : 'GitHub 源数据 ↗'}</button>
+        <button class="btn" onclick="window.location.href='index.html'">📡 ${en ? 'Realtime board (local)' : '实时面板（本机）'}</button>
       </div>
       <div style="font-size:11px;color:var(--muted);margin-top:10px">
-        本视图直接渲染 <code>${id}/dashboard.json</code> · 推理输出来自 PhysioAgent + BehaviorAgent + ClinicalAgent，由 Narrator 综合
+        ${en
+          ? `This view renders <code>${id}/dashboard.json</code> directly · reasoning produced by PhysioAgent + BehaviorAgent + ClinicalAgent and synthesised by Narrator`
+          : `本视图直接渲染 <code>${id}/dashboard.json</code> · 推理输出来自 PhysioAgent + BehaviorAgent + ClinicalAgent，由 Narrator 综合`}
       </div>
     </div>
   `;
@@ -1522,6 +1595,7 @@ function renderWikiView(id, data) {
   // 把 physio + behavior insights 合并成 reasoning chain，每条挂 wiki 链接
   const allInsights = [...ph.insights, ...bh.insights];
 
+  const en = isEN();
   // 由 supporting_knowledge 推断 wiki 引用
   const reasoningHtml = allInsights.map((ins, i) => {
     const kbLinks = (ins.supporting_knowledge || []).map(code => {
@@ -1534,8 +1608,8 @@ function renderWikiView(id, data) {
         <span class="num">${i+1}</span>
         <span class="title">${ins.observation}</span>
         <div class="body">
-          <strong>临床含义：</strong>${ins.clinical_implication}
-          ${ins.differential ? `<br><strong style="color:var(--muted)">鉴别：</strong><span style="color:var(--muted)">${ins.differential}</span>` : ''}
+          <strong>${en ? 'Clinical implication:' : '临床含义：'}</strong>${ins.clinical_implication}
+          ${ins.differential ? `<br><strong style="color:var(--muted)">${en ? 'Differential:' : '鉴别：'}</strong><span style="color:var(--muted)">${ins.differential}</span>` : ''}
         </div>
         <div class="cite">
           <a href="#" onclick="event.preventDefault();alert('Confidence: ${ins.confidence}\\nDomain: ${ins.domain}\\nID: ${ins.id}')">conf ${(ins.confidence*100).toFixed(0)}%</a>
@@ -1547,13 +1621,14 @@ function renderWikiView(id, data) {
 
   // 把数字按 wiki concept 分组（HRV / 步态 / EDA / 语音 / BPSD）
   const physioByDomain = {
-    "步态": ph.insights.filter(i => i.supporting_knowledge.some(k => k.startsWith('SENSOR_IMU') || k.startsWith('NORM_GAIT') || k.startsWith('MCR'))),
-    "HRV": ph.insights.filter(i => i.supporting_knowledge.some(k => k.startsWith('SENSOR_PPG'))),
-    "EDA": ph.insights.filter(i => i.supporting_knowledge.some(k => k.startsWith('SENSOR_EDA'))),
+    "gait": ph.insights.filter(i => i.supporting_knowledge.some(k => k.startsWith('SENSOR_IMU') || k.startsWith('NORM_GAIT') || k.startsWith('MCR'))),
+    "HRV":  ph.insights.filter(i => i.supporting_knowledge.some(k => k.startsWith('SENSOR_PPG'))),
+    "EDA":  ph.insights.filter(i => i.supporting_knowledge.some(k => k.startsWith('SENSOR_EDA'))),
   };
+  const domainLabel = (dom) => dom === 'gait' ? (en ? 'Gait' : '步态') : dom;
   const physioGridHtml = Object.entries(physioByDomain).filter(([_,arr]) => arr.length).map(([dom, arr]) => `
     <div class="modal-block" style="cursor:default">
-      <h4>${dom==='步态'?'🚶':dom==='HRV'?'❤️':'💧'} ${dom}</h4>
+      <h4>${dom==='gait'?'🚶':dom==='HRV'?'❤️':'💧'} ${domainLabel(dom)}</h4>
       ${arr.map(i => `<div style="font-size:12px;padding:4px 0;border-bottom:1px dashed var(--border)">
         ${i.observation}
       </div>`).join('')}
@@ -1561,23 +1636,25 @@ function renderWikiView(id, data) {
     </div>
   `).join('');
 
-  // BPSD 7 网格 — 从 behavior insights 推断
-  const bpsdMap = {激越:'ok', 焦虑:'ok', 淡漠:'ok', 抑郁:'ok', 睡眠:'ok', 日落:'ok', 游荡:'ok'};
+  // BPSD 7 grid — keyed by canonical name, label localised
+  const BPSD_KEYS = ['agitation','anxiety','apathy','depression','sleep','sundowning','wandering'];
+  const bpsdMap = {agitation:'ok', anxiety:'ok', apathy:'ok', depression:'ok', sleep:'ok', sundowning:'ok', wandering:'ok'};
   bh.insights.forEach(i => {
     i.supporting_knowledge.forEach(k => {
-      if (k.startsWith('BPSD_AGITATION'))  bpsdMap['激越'] = 'bad';
-      if (k.startsWith('BPSD_ANXIETY'))    bpsdMap['焦虑'] = 'warn';
-      if (k.startsWith('BPSD_DEPRESSION')) bpsdMap['抑郁'] = 'warn';
-      if (k.startsWith('BPSD_APATHY'))     bpsdMap['淡漠'] = 'warn';
-      if (k.startsWith('BPSD_SLEEP'))      bpsdMap['睡眠'] = 'warn';
-      if (k.startsWith('BPSD_SUNDOWNING')) bpsdMap['日落'] = 'warn';
-      if (k.startsWith('BPSD_WANDERING'))  bpsdMap['游荡'] = 'bad';
+      if (k.startsWith('BPSD_AGITATION'))  bpsdMap.agitation = 'bad';
+      if (k.startsWith('BPSD_ANXIETY'))    bpsdMap.anxiety = 'warn';
+      if (k.startsWith('BPSD_DEPRESSION')) bpsdMap.depression = 'warn';
+      if (k.startsWith('BPSD_APATHY'))     bpsdMap.apathy = 'warn';
+      if (k.startsWith('BPSD_SLEEP'))      bpsdMap.sleep = 'warn';
+      if (k.startsWith('BPSD_SUNDOWNING')) bpsdMap.sundowning = 'warn';
+      if (k.startsWith('BPSD_WANDERING'))  bpsdMap.wandering = 'bad';
     });
   });
-  const bpsdHtml = Object.entries(bpsdMap).map(([nm, lv]) => `
-    <div class="bpsd-cell lv-${lv}" style="cursor:default">
-      <div class="nm">${nm}</div>
-      <div class="lv">${lv==='ok'?'正常':lv==='warn'?'关注':'高风险'}</div>
+  const bpsdLevelLabel = (lv) => lv==='ok' ? (en ? 'normal' : '正常') : lv==='warn' ? (en ? 'watch' : '关注') : (en ? 'high risk' : '高风险');
+  const bpsdHtml = BPSD_KEYS.map(k => `
+    <div class="bpsd-cell lv-${bpsdMap[k]}" style="cursor:default">
+      <div class="nm">${t('bpsd.' + k)}</div>
+      <div class="lv">${bpsdLevelLabel(bpsdMap[k])}</div>
     </div>
   `).join('');
 
@@ -1588,36 +1665,44 @@ function renderWikiView(id, data) {
                 c.stage_inclination.includes('moderate') ? 'Moderate' :
                 c.stage_inclination.includes('severe') ? 'Severe' : 'SCD';
   const stageIdx = ['SCD','MCI','Mild','Moderate','Severe'].indexOf(stage);
+  const stageLabel = en ? 'Stage' : '阶段';
   const stageBarHtml = ['SCD','MCI','Mild','Moderate','Severe'].map((s, i) => `
     <div class="stage-cell ${i===stageIdx?'active':''}">
-      <div class="lbl">阶段 ${i+1}</div>
+      <div class="lbl">${stageLabel} ${i+1}</div>
       <div class="stg">${s}</div>
     </div>
   `).join('');
+
+  const wikiViewBadge = en ? '📚 WIKI KB view' : '📚 WIKI KB 视角';
+  const pmetaW = en
+    ? `${meta.age}y ${meta.sex} · Education ${meta.edu}y · progression: <code>${meta.pattern}</code>`
+    : `${meta.age}岁 ${meta.sex} · 教育 ${meta.edu} 年 · 进展模式: <code>${meta.pattern}</code>`;
 
   document.getElementById('mainPanel').innerHTML = `
     ${renderViewTabs(id)}
     <div class="patient-bar">
       <div>
-        <div class="pname">${id} <span style="font-size:11px;background:#f0fdfa;color:#0f766e;padding:2px 8px;border-radius:4px;margin-left:6px">📚 WIKI KB 视角</span></div>
-        <div class="pmeta">${meta.age}岁 ${meta.sex} · 教育 ${meta.edu} 年 · 进展模式: <code>${meta.pattern}</code></div>
+        <div class="pname">${id} <span style="font-size:11px;background:var(--brand-blue-bg);color:var(--brand-blue);padding:2px 8px;border-radius:4px;margin-left:6px">${wikiViewBadge}</span></div>
+        <div class="pmeta">${pmetaW}</div>
       </div>
       <div class="stat">
         <div class="v">${ph.insights.length + bh.insights.length}</div>
-        <div class="l">推理条</div>
+        <div class="l">${en ? 'Reasoning steps' : '推理条'}</div>
       </div>
       <div class="stat">
         <div class="v">${ph.kb_entries_used + bh.kb_entries_used}</div>
-        <div class="l">KB 条目引用</div>
+        <div class="l">${en ? 'KB entries cited' : 'KB 条目引用'}</div>
       </div>
       <div class="stat">
         <div class="v">${(c.stage_confidence*100).toFixed(0)}%</div>
-        <div class="l">综合置信度</div>
+        <div class="l">${en ? 'Overall confidence' : '综合置信度'}</div>
       </div>
     </div>
 
     <div class="alert-banner ${d.alert_level==='red'?'':'warn'}">
-      📚 按 ad-wiki-pages 框架解读 · 同一份原始数据 (physio + behavior insights) · 不同的临床知识体系
+      📚 ${en
+        ? 'Reading the same raw data (physio + behavior insights) through the ad-wiki-pages framework — different clinical knowledge organisation.'
+        : '按 ad-wiki-pages 框架解读 · 同一份原始数据 (physio + behavior insights) · 不同的临床知识体系'}
     </div>
 
     ${renderCadenceRow(id, data)}
@@ -1625,42 +1710,42 @@ function renderWikiView(id, data) {
     ${renderRealtimeBoard(id)}
 
     <div class="section">
-      <h2>AD 分期 <span class="desc">基于 wiki concepts/ad_staging + AT(N) 框架</span>
+      <h2>${en ? 'AD clinical stage' : 'AD 分期'} <span class="desc">${en ? 'Based on wiki concepts/ad_staging + AT(N) framework' : '基于 wiki concepts/ad_staging + AT(N) 框架'}</span>
         <span class="badge" style="background:var(--orange-bg);color:var(--orange);margin-left:auto">${stage} · ${(c.stage_confidence*100).toFixed(0)}%</span>
       </h2>
       <div class="stage-bar">${stageBarHtml}</div>
       <div class="confidence-bar"><div style="width:${c.stage_confidence*100}%"></div></div>
-      <div class="conf-label"><span>低</span><span>分期：${stage}</span><span>高</span></div>
+      <div class="conf-label"><span>${en ? 'low' : '低'}</span><span>${en ? 'Stage' : '分期'}: ${stage}</span><span>${en ? 'high' : '高'}</span></div>
     </div>
 
     <div class="section">
-      <h2>多模态指标 <span class="desc">PhysioAgent insights → wiki concepts/ 阈值映射</span></h2>
+      <h2>${en ? 'Multimodal metrics' : '多模态指标'} <span class="desc">${en ? 'PhysioAgent insights → wiki concepts/ thresholds' : 'PhysioAgent insights → wiki concepts/ 阈值映射'}</span></h2>
       <div class="modal-grid">${physioGridHtml}</div>
     </div>
 
     <div class="section">
-      <h2>Unified Clinical Agent 推理链 <span class="desc">${ph.insights.length} 条 physio + ${bh.insights.length} 条 behavior · 每条挂 wiki KB</span></h2>
+      <h2>${en ? 'Unified Clinical Agent reasoning chain' : 'Unified Clinical Agent 推理链'} <span class="desc">${ph.insights.length} ${en ? 'physio + ' : '条 physio + '}${bh.insights.length} ${en ? 'behavior · each links to wiki KB' : '条 behavior · 每条挂 wiki KB'}</span></h2>
       <div class="reason-chain">${reasoningHtml}</div>
     </div>
 
     <div class="section">
-      <h2>BPSD 7 症状 <span class="desc">基于 NPI 量表 · BehaviorAgent KB 命中</span></h2>
+      <h2>${en ? 'BPSD 7 dimensions' : 'BPSD 7 症状'} <span class="desc">${en ? 'NPI scale · BehaviorAgent KB hits' : '基于 NPI 量表 · BehaviorAgent KB 命中'}</span></h2>
       <div class="bpsd-grid">${bpsdHtml}</div>
     </div>
 
     <div class="section">
-      <h2>处置 <span class="desc">基于 wiki KB + ClinicalAgent 综合判断</span></h2>
+      <h2>${en ? 'Actions' : '处置'} <span class="desc">${en ? 'Wiki KB + ClinicalAgent synthesis' : '基于 wiki KB + ClinicalAgent 综合判断'}</span></h2>
       <div class="action-row">
-        <button class="btn primary" onclick="openMindReportModal('${id}')">📄 完整 report.md</button>
-        ${c.gold_standard_referral === 'yes' ? `<button class="btn warn" onclick="openMindReferralModal('${id}')">🩺 转诊详情</button>` : ''}
-        <button class="btn" onclick="window.open('https://jewelina95.github.io/ad-wiki-pages/','_blank')">📚 完整 wiki KB ↗</button>
-        <button class="btn" onclick="window.open('https://github.com/Jewelina95/ad-mind-pipeline/tree/main/data_v2/${id}','_blank')">📂 GitHub 源数据 ↗</button>
-        <button class="btn" onclick="switchMindView('mind')" style="background:#7c3aed;color:white;border-color:#7c3aed">🧠 切到 MIND 视角对比</button>
+        <button class="btn primary" onclick="openMindReportModal('${id}')">📄 ${en ? 'Full report.md' : '完整 report.md'}</button>
+        ${c.gold_standard_referral === 'yes' ? `<button class="btn warn" onclick="openMindReferralModal('${id}')">🩺 ${en ? 'Referral details' : '转诊详情'}</button>` : ''}
+        <button class="btn" onclick="window.open('https://jewelina95.github.io/ad-wiki-pages/','_blank')">📚 ${en ? 'Open full wiki KB ↗' : '完整 wiki KB ↗'}</button>
+        <button class="btn" onclick="window.open('https://github.com/Jewelina95/ad-mind-pipeline/tree/main/data_v2/${id}','_blank')">📂 ${en ? 'GitHub source ↗' : 'GitHub 源数据 ↗'}</button>
+        <button class="btn" onclick="switchMindView('mind')" style="background:#7c3aed;color:white;border-color:#7c3aed">🧠 ${en ? 'Compare with MIND view' : '切到 MIND 视角对比'}</button>
       </div>
       <div style="font-size:11px;color:var(--muted);margin-top:10px">
-        WIKI 视角：用 <a href="https://jewelina95.github.io/ad-wiki-pages/" target="_blank" style="color:var(--teal)">ad-wiki-pages</a> 的 concept / method / agent 框架重新组织。
-        每条结论的 KB 链接（MCR_CRITERIA → mcr_criteria.md 等）实时跟随 wiki 更新。
-        改 ad-wiki-pages 或 ad-mind-pipeline → 刷新页面就能看到差异。
+        ${en
+          ? `WIKI view: data reorganised through the <a href="https://jewelina95.github.io/ad-wiki-pages/" target="_blank" style="color:var(--teal)">ad-wiki-pages</a> concept / method / agent framework. Each conclusion's KB link (MCR_CRITERIA → mcr_criteria.md, etc.) updates live with the wiki. Edit ad-wiki-pages or ad-mind-pipeline → refresh to see the difference.`
+          : `WIKI 视角：用 <a href="https://jewelina95.github.io/ad-wiki-pages/" target="_blank" style="color:var(--teal)">ad-wiki-pages</a> 的 concept / method / agent 框架重新组织。每条结论的 KB 链接（MCR_CRITERIA → mcr_criteria.md 等）实时跟随 wiki 更新。改 ad-wiki-pages 或 ad-mind-pipeline → 刷新页面就能看到差异。`}
       </div>
     </div>
   `;
@@ -2017,10 +2102,12 @@ function selectPatient(id) {
   document.querySelectorAll('.patient-card').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
+  const en = isEN();
 
+  const stageLabel = en ? 'Stage' : '阶段';
   const stageHtml = STAGE_NAMES.map((s, i) => `
     <div class="stage-cell ${i === p.stageIdx ? 'active' : ''}">
-      <div class="lbl">阶段 ${i+1}</div>
+      <div class="lbl">${stageLabel} ${i+1}</div>
       <div class="stg">${s}</div>
     </div>
   `).join('');
@@ -2029,7 +2116,7 @@ function selectPatient(id) {
     const c = p.cadence[k];
     return `<div class="cad ${c.level}" onclick="openCadenceModal('${k}','${p.id}')">
       <div class="ic">${k==='5min'?'⚡':k==='1h'?'⏱':k==='1d'?'📅':k==='7d'?'📊':'📈'}</div>
-      <div class="name">${k} 窗口</div>
+      <div class="name">${k} ${en ? 'window' : '窗口'}</div>
       <div class="v">${c.v}</div>
     </div>`;
   }).join('');
@@ -2061,17 +2148,19 @@ function selectPatient(id) {
     </div>
   `).join('');
 
+  const bpsdLabelEN = ['Agitation','Anxiety','Apathy','Depression','Sleep','Sundowning','Wandering'];
+  const bpsdLevelText = (lv) => lv==='ok' ? (en?'normal':'正常') : lv==='warn' ? (en?'watch':'关注') : (en?'high risk':'高风险');
   const bpsdHtml = p.bpsd.map((b, idx) => `
     <div class="bpsd-cell lv-${b[1]}" onclick="openBpsdModal(${idx},'${p.id}')">
-      <div class="nm">${b[0]}</div>
-      <div class="lv">${b[1]==='ok'?'正常':b[1]==='warn'?'关注':'高风险'}</div>
+      <div class="nm">${en ? bpsdLabelEN[idx] : b[0]}</div>
+      <div class="lv">${bpsdLevelText(b[1])}</div>
       <div class="nb">${b[2]}</div>
     </div>
   `).join('');
 
   const alertHtml = p.alert
     ? `<div class="alert-banner">${p.alertText}</div>`
-    : `<div class="alert-banner ok">✅ 当前无急性预警，常规监测中</div>`;
+    : `<div class="alert-banner ok">✅ ${en ? 'No acute alerts; routine monitoring active.' : '当前无急性预警，常规监测中'}</div>`;
 
   // MMSE sparkline
   const sd = p.sparkData;
@@ -2085,22 +2174,25 @@ function selectPatient(id) {
   const lastX = sw, lastY = sh - ((sd[sd.length-1] - minV) / (maxV - minV)) * sh;
 
   const main = document.getElementById('mainPanel');
+  const sex = en && p.sex === '女' ? 'F' : en && p.sex === '男' ? 'M' : p.sex;
+  const ageStr = en ? `${p.age}y` : `${p.age}岁`;
+  const onGloveLabel = en ? 'Glove since' : '戴手套自';
   main.innerHTML = `
     <div class="patient-bar">
       <div>
         <div class="pname">${p.name}</div>
-        <div class="pmeta">${p.id} · ${p.age}岁 ${p.sex} · 戴手套自 ${p.onGloveSince}</div>
+        <div class="pmeta">${p.id} · ${ageStr} ${sex} · ${onGloveLabel} ${p.onGloveSince}</div>
       </div>
       <div class="stat">
         <div class="v">${p.lastMMSE}</div>
-        <div class="l">最近 MMSE</div>
+        <div class="l">${en ? 'Last MMSE' : '最近 MMSE'}</div>
       </div>
       <div class="stat">
         <div class="v">${p.lastCDR}</div>
         <div class="l">CDR</div>
       </div>
       <div class="stat" style="flex:1">
-        <div class="l">MMSE 趋势 (近 9 周)</div>
+        <div class="l">${en ? 'MMSE trend (last 9 weeks)' : 'MMSE 趋势 (近 9 周)'}</div>
         <svg class="spark" viewBox="0 0 ${sw} ${sh+4}">
           <path d="${path}" />
           <circle class="dot" cx="${lastX}" cy="${lastY}" r="3" />
@@ -2111,7 +2203,7 @@ function selectPatient(id) {
     ${alertHtml}
 
     <div class="section" style="padding:14px 16px">
-      <h2>📡 Sensor Board <span class="desc">手套 8 通道（演示模式 · 模拟数据）</span>
+      <h2>📡 Sensor Board <span class="desc">${en ? '8 glove channels (demo · simulated data)' : '手套 8 通道（演示模式 · 模拟数据）'}</span>
         <span class="badge" style="background:#fef3c7;color:#854d0e;margin-left:auto;border:1px solid #f59e0b">⚠ DEMO</span>
       </h2>
       <div class="sensor-board-head">
@@ -2125,7 +2217,7 @@ function selectPatient(id) {
         <span class="sep">|</span>
         <span id="sbClock">${new Date().toTimeString().slice(0,8)}</span>
         <span class="sep">|</span>
-        <span style="color:#94a3b8;font-size:11px">真实数据需本机跑 backend + ESP32</span>
+        <span style="color:#94a3b8;font-size:11px">${en ? 'Real data needs a local backend + ESP32' : '真实数据需本机跑 backend + ESP32'}</span>
       </div>
       <div class="channel-grid" id="channelGrid">
         ${CHANNELS.map(c => `
@@ -2144,49 +2236,49 @@ function selectPatient(id) {
     </div>
 
     <div class="section">
-      <h2>AD 分期 <span class="desc">基于多模态融合 · AT(N) 框架</span>
-        <span class="badge" style="background:var(--orange-bg);color:var(--orange);margin-left:auto">置信度 ${(p.confidence*100).toFixed(0)}%</span>
+      <h2>${en ? 'AD clinical stage' : 'AD 分期'} <span class="desc">${en ? 'Multimodal fusion · AT(N) framework' : '基于多模态融合 · AT(N) 框架'}</span>
+        <span class="badge" style="background:var(--orange-bg);color:var(--orange);margin-left:auto">${en ? 'Confidence' : '置信度'} ${(p.confidence*100).toFixed(0)}%</span>
       </h2>
       <div class="stage-bar">${stageHtml}</div>
       <div class="confidence-bar"><div style="width:${p.confidence*100}%"></div></div>
       <div class="conf-label">
-        <span>低置信</span>
-        <span>${p.stage === 'Healthy' ? '健康对照（不参与分期）' : `当前判断：${p.stage}`}</span>
-        <span>高置信</span>
+        <span>${en ? 'low conf' : '低置信'}</span>
+        <span>${p.stage === 'Healthy' ? (en ? 'Healthy control (not staged)' : '健康对照（不参与分期）') : (en ? `Current: ${p.stage}` : `当前判断：${p.stage}`)}</span>
+        <span>${en ? 'high conf' : '高置信'}</span>
       </div>
     </div>
 
     <div class="section">
-      <h2>5 时间尺度 cadence <span class="desc">同一 Agent · 5 个窗口同时跑</span></h2>
+      <h2>${en ? '5 time-scale cadence' : '5 时间尺度 cadence'} <span class="desc">${en ? 'Same Agent · 5 windows in parallel' : '同一 Agent · 5 个窗口同时跑'}</span></h2>
       <div class="cadence-grid">${cadenceHtml}</div>
     </div>
 
     <div class="section">
-      <h2>多模态指标 <span class="desc">HRV / 步态 / EDA / 语音</span></h2>
+      <h2>${en ? 'Multimodal metrics' : '多模态指标'} <span class="desc">${en ? 'HRV / gait / EDA / voice' : 'HRV / 步态 / EDA / 语音'}</span></h2>
       <div class="modal-grid">${modalHtml}</div>
     </div>
 
     <div class="section">
-      <h2>Agent 推理链 <span class="desc">每条结论可追溯到 wiki KB + 原始论文</span></h2>
+      <h2>${en ? 'Agent reasoning chain' : 'Agent 推理链'} <span class="desc">${en ? 'Each conclusion traces back to wiki KB + source paper' : '每条结论可追溯到 wiki KB + 原始论文'}</span></h2>
       <div class="reason-chain">${reasonHtml}</div>
     </div>
 
     <div class="section">
-      <h2>BPSD 7 症状风险 <span class="desc">基于 NPI 量表维度 + 多模态融合</span></h2>
+      <h2>${en ? 'BPSD 7-symptom risk' : 'BPSD 7 症状风险'} <span class="desc">${en ? 'NPI scale dimensions + multimodal fusion' : '基于 NPI 量表维度 + 多模态融合'}</span></h2>
       <div class="bpsd-grid">${bpsdHtml}</div>
     </div>
 
     <div class="section">
-      <h2>处置 <span class="desc">将判断转化为操作 · 点击查看实际生成的内容</span></h2>
+      <h2>${en ? 'Actions' : '处置'} <span class="desc">${en ? 'Translate the assessment into action — click for the auto-generated content' : '将判断转化为操作 · 点击查看实际生成的内容'}</span></h2>
       <div class="action-row">
-        <button class="btn primary" onclick="openReportModal('family','${p.id}')">📄 生成家属周报</button>
-        <button class="btn primary" onclick="openReportModal('clinical','${p.id}')">📋 推送医生周报</button>
+        <button class="btn primary" onclick="openReportModal('family','${p.id}')">📄 ${en ? 'Family weekly report' : '生成家属周报'}</button>
+        <button class="btn primary" onclick="openReportModal('clinical','${p.id}')">📋 ${en ? 'Clinical weekly report' : '推送医生周报'}</button>
         ${p.stage === 'MCI' || p.stage === 'Mild' ?
-          `<button class="btn warn" onclick="openReportModal('goldstandard','${p.id}')">🩺 建议金标准检查</button>` : ''}
+          `<button class="btn warn" onclick="openReportModal('goldstandard','${p.id}')">🩺 ${en ? 'Recommend gold-standard workup' : '建议金标准检查'}</button>` : ''}
         ${p.alert ?
-          `<button class="btn warn" onclick="openReportModal('intervention','${p.id}')">🎵 立即触发干预</button>` : ''}
-        <button class="btn" onclick="window.location.href='index.html'">📡 打开实时面板（需 backend）↗</button>
-        <button class="btn" onclick="window.open('https://jewelina95.github.io/ad-wiki-pages/','_blank')">📚 打开 wiki KB ↗</button>
+          `<button class="btn warn" onclick="openReportModal('intervention','${p.id}')">🎵 ${en ? 'Trigger intervention now' : '立即触发干预'}</button>` : ''}
+        <button class="btn" onclick="window.location.href='index.html'">📡 ${en ? 'Open realtime board (needs backend) ↗' : '打开实时面板（需 backend）↗'}</button>
+        <button class="btn" onclick="window.open('https://jewelina95.github.io/ad-wiki-pages/','_blank')">📚 ${en ? 'Open wiki KB ↗' : '打开 wiki KB ↗'}</button>
       </div>
     </div>
   `;

@@ -874,6 +874,205 @@ const SENSOR_PROFILES = {
 
 const STAGE_NAMES = ["SCD", "MCI", "Mild", "Moderate", "Severe"];
 
+// ===== ZH→EN translation table for demo data fragments =====
+// Keys are exact Chinese strings used in PATIENTS / CHANNELS / details dicts.
+// `tr(s)` returns EN when in English mode, otherwise the original ZH.
+const TR_MAP = {
+  /* patient names + sex */
+  "张某 (匿名)": "Patient A (de-id)",
+  "李某 (匿名)": "Patient B (de-id)",
+  "S01 健康基线": "S01 healthy baseline",
+  "男": "M", "女": "F",
+
+  /* CHANNELS short labels */
+  "皮肤电导": "Skin conductance",
+  "光电容积": "PPG",
+  "心率": "Heart rate",
+  "血氧": "SpO2",
+  "加速度 X": "Accel X",
+  "加速度 Y": "Accel Y",
+  "加速度 Z": "Accel Z",
+  "环境/语音": "Audio/Voice",
+
+  /* cadence values */
+  "EDA 平稳": "EDA steady",
+  "活动 正常": "Activity normal",
+  "睡眠 6.3h": "Sleep 6.3h",
+  "睡眠 4.8h": "Sleep 4.8h",
+  "睡眠 7.8h": "Sleep 7.8h",
+  "步速 ↓5%": "Speed ↓5%",
+  "步速 ↓12%": "Speed ↓12%",
+  "CCI ↓0.3 SD": "CCI ↓0.3 SD",
+  "CCI ↓1.4 SD": "CCI ↓1.4 SD",
+  "EDA + HR 突升": "EDA + HR surge",
+  "情绪激活": "Mood arousal",
+  "全部正常": "All normal",
+  "活动 充足": "Activity sufficient",
+  "稳定": "Stable",
+  "无漂移": "No drift",
+
+  /* metric names + row labels */
+  "步态 (IMU)": "Gait (IMU)",
+  "语音": "Voice",
+  "静息 HR": "Resting HR",
+  "步速": "Speed",
+  "步频": "Cadence",
+  "步态变异性": "Gait variability",
+  "双任务代价": "Dual-task cost",
+  "跌倒风险": "Fall risk",
+  "SCL 均值": "SCL mean",
+  "SCR 频率": "SCR rate",
+  "唤醒度": "Arousal",
+  "语速": "Speech rate",
+  "停顿率": "Pause ratio",
+  "F0 抖动": "F0 jitter",
+  "语义错误": "Semantic errors",
+
+  /* metric row values */
+  "中等": "medium",
+  "高": "high",
+  "频繁": "frequent",
+  "低-中": "low–med",
+  "3.1 字/秒": "3.1 ch/s",
+  "1.8 字/秒": "1.8 ch/s",
+  "4.6 字/秒": "4.6 ch/s",
+
+  /* metric source notes */
+  "wiki/concepts/imu_gait.md + Verghese MCR": "wiki/concepts/imu_gait.md + Verghese MCR",
+  "wiki/concepts/imu_gait.md": "wiki/concepts/imu_gait.md",
+  "wiki/concepts/ppg_hrv.md": "wiki/concepts/ppg_hrv.md",
+  "wiki/concepts/eda_signal.md": "wiki/concepts/eda_signal.md",
+
+  /* row 4th-col interpretations */
+  "略低于自身基线 (45±6)": "slightly below personal baseline (45±6)",
+  "显著降低": "markedly reduced",
+  "+45% 基线": "+45% above baseline",
+
+  /* BPSD nb tags */
+  "无": "none",
+  "活跃": "active",
+  "偶发": "occasional",
+  "正常": "normal"
+};
+function tr(s) {
+  if (s === null || s === undefined) return s;
+  if (!isEN()) return s;
+  return TR_MAP[s] !== undefined ? TR_MAP[s] : s;
+}
+
+// ===== EN overlays for the bigger structures =====
+
+// Patient-level EN strings (alertText + reasoning steps).
+// Keyed by patient id. Each reasoning entry mirrors index in PATIENTS[id].reasoning.
+const PATIENTS_EN = {
+  "P001": {
+    alertText: null,
+    reasoning: [
+      { title: "Feature summary",
+        body: "Within the 30-day window: gait speed ↓5% vs personal baseline, dual-task cost +18%, pause ratio 22% (baseline 14%). HRV SDNN 38 ms is below the 45 ms baseline." },
+      { title: "KB lookup: MCR composite",
+        body: "Meets the Verghese MCR criterion: gait speed < 1.0 m/s + subjective cognitive complaint → MCR-positive. MCR-positive individuals progress to dementia at roughly 2× the rate of controls within 3 years." },
+      { title: "KB lookup: Dual-task cost",
+        body: "DTC > 15% is linked to prefrontal executive decline and is a sensitive MCI marker (Montero-Odasso 2017). The current +18% is over threshold." },
+      { title: "Composite judgment → MCI",
+        body: "Motor-cognitive (MCR+) + language (pause ratio↑, speech rate↓) + autonomic (HRV down) — three converging modalities point to MCI. AT(N) biomarkers are pending; this stage is a clinical inference, not a biological confirmation. Recommended next step: plasma p-tau217 or referral to neurology for PET." }
+    ]
+  },
+  "P002": {
+    alertText: "⚠️ A 5-min window detected EDA + HR rising together — agitation episode possible within 1–2 hours",
+    reasoning: [
+      { title: "Acute trigger: 5-min window anomaly",
+        body: "EDA SCL +45% over baseline + HR 92 bpm (baseline 76±5) + stable gait (motor cause excluded). Time 16:30, inside the sundowning window." },
+      { title: "KB lookup: BPSD agitation prodrome",
+        body: "Iaboni 2022: combined EDA + HR + ACC achieves AUC 0.87 for BPSD detection; an EDA rise 1–2 h before an agitation episode is a stable warning signal." },
+      { title: "KB lookup: Sundowning syndrome",
+        body: "16:30 falls in the typical sundowning window (15:00–19:00). Over the past 30 days this patient showed 8 similar patterns in this window." },
+      { title: "Recommended intervention",
+        body: "Trigger music therapy now (patient preference: 1950s-era songs) and notify caregiver to be present. If EDA does not subside within 30 min, start voice-guided breathing. Monitor ARIA risk (patient is on lecanemab)." }
+    ]
+  },
+  "S01": {
+    alertText: null,
+    reasoning: [
+      { title: "S01 healthy baseline",
+        body: "Used to calibrate the agent feature pipeline and threshold rules. All metrics are within age norms; no AD pathology risk." }
+    ]
+  }
+};
+
+// Cadence detail dictionary EN
+const CADENCE_DETAILS_EN = {
+  "5min": { name: "5-minute realtime window", purpose: "Acute event detection",
+    measures: ["EDA SCL/SCR transients", "HR sudden rise / drop", "Large IMU motion bursts", "Microphone volume anomaly"],
+    triggers: ["EDA + HR rise together → possible BPSD agitation prodrome (Iaboni 2022 AUC 0.87)", "HR > baseline +30% sustained 60s → alert", "High IMU acceleration → fall detection"],
+    output: "Red/yellow alert → push to caregiver phone" },
+  "1h":  { name: "1-hour short window", purpose: "Short-term state summary",
+    measures: ["HRV time-domain (SDNN, RMSSD)", "Activity distribution", "Mood arousal", "Posture changes"],
+    triggers: ["HRV persistently < personal baseline -1 SD → autonomic activation", "Sedentary > 90 min → stand-up reminder"],
+    output: "Realtime status board (color + values)" },
+  "1d":  { name: "1-day window", purpose: "Daily report",
+    measures: ["Sleep duration + quality (PPG+IMU)", "Total activity / step count", "ADL task completion", "Sundowning pattern (15–19h EDA/HR)"],
+    triggers: ["Sleep < 5h or sleep efficiency < 80% → flag", "Abnormal EDA pattern in sundowning window → flag"],
+    output: "Daily report → physician + family" },
+  "7d":  { name: "7-day weekly window", purpose: "Short-term trend",
+    measures: ["Gait-speed decline slope", "Weekly HRV mean change", "Speech rate / pause ratio weekly delta", "BPSD event frequency"],
+    triggers: ["Weekly gait-speed drop > 5% → flag", "BPSD events > 3/week → escalate concern"],
+    output: "Weekly trend + family weekly report" },
+  "30d": { name: "30-day monthly window", purpose: "Stage assessment · turning-point detection",
+    measures: ["Composite Cognitive Index (CCI)", "MMSE / MoCA estimate", "Longitudinal trajectory inflection", "AT(N) biomarker inference"],
+    triggers: ["CCI deviates > 2 SD from baseline → SCD→MCI inflection candidate", "Gait + language + HRV decline together → progression alert"],
+    output: "Stage-transition alert → recommend PET / plasma p-tau217" }
+};
+
+// Metric details EN
+const METRIC_DETAILS_EN = {
+  hrv: { name: "HRV (PPG)",
+    rationale: "Heart-rate variability reflects autonomic balance. Early AD tau deposition affects the insula and vagal pathways, leading to sustained HRV decline.",
+    thresholds: [
+      ["SDNN", "Normal ≥ 50 ms · MCI 35–50 · AD markedly reduced < 35"],
+      ["RMSSD", "Parasympathetic index · normal ≥ 27 ms"],
+      ["LF/HF", "Sympathetic/parasympathetic ratio · > 2.5 indicates sympathetic dominance"],
+      ["Resting HR", "AD patients trend faster (baseline drift)"]
+    ] },
+  gait: { name: "Gait (IMU)",
+    rationale: "Damage to prefrontal–hippocampal circuitry impairs motor–cognitive integration; basal-ganglia / cortical loop disruption raises gait variability. Gait-speed inflection can precede MCI by ~12.1 years.",
+    thresholds: [
+      ["Speed", "MCR-positive threshold < 1.0 m/s · healthy ≥ 1.2"],
+      ["Cadence", "Normal 100–120 spm"],
+      ["Gait variability", "Normal < 3% · elevated > 5% suggests cognitive–motor decoupling"],
+      ["Dual-task cost (DTC)", "> 15% indicates prefrontal executive decline"]
+    ] },
+  eda: { name: "EDA",
+    rationale: "Skin conductance = sympathetic cholinergic output. The amygdala–insula loop is involved early in AD; personal thresholds matter most (between-individual variance is far larger than population variance).",
+    thresholds: [
+      ["SCL mean", "Personal baseline drift > 30% → alert"],
+      ["SCR frequency", "BPSD agitation > 3/min"],
+      ["NS-SCR", "Anxiety marker · > 2/min indicates high arousal"],
+      ["Arousal", "EDA + HR co-marker"]
+    ] },
+  voice: { name: "Voice",
+    rationale: "Temporal-lobe damage → word-retrieval difficulty; hippocampal damage → working-memory deficit. Language change can precede a confirmed diagnosis by 10 years.",
+    thresholds: [
+      ["Speech rate", "Adult Mandarin 4–5 ch/s · MCI drops to 2.5–3.5"],
+      ["Pause ratio", "Normal < 12% · MCI 18–25% · AD > 30%"],
+      ["TTR", "Lexical diversity · normal ≥ 0.7 · AD < 0.5"],
+      ["F0 jitter", "Vocal-fold stability"]
+    ] }
+};
+
+// BPSD details EN
+const BPSD_DETAILS_EN = [
+  { nm: "Agitation",   desc: "Aimless motion, resistance to care, aggression",        signal: "EDA SCL +30%, HR +20 bpm, high IMU acceleration, voice volume↑", warn: "Most frequent in the sundowning window (15–19h)" },
+  { nm: "Anxiety",     desc: "Repeated questioning, restlessness, agitation",         signal: "NS-SCR > 2/min, marked HRV decline, faster speech rate",          warn: "Within 30 min of environmental change / family departure" },
+  { nm: "Apathy",      desc: "Loss of interest, low motivation, social withdrawal",   signal: "Daily activity < baseline -40%, voice events < 5/h, blunted face",warn: "Diagnostic threshold met after ≥ 2 weeks" },
+  { nm: "Depression",  desc: "Low mood, sadness, self-blame",                         signal: "Slowed speech, monotone F0, more night awakenings, low morning HR", warn: "Suicidal ideation requires immediate referral" },
+  { nm: "Sleep",       desc: "Sleep onset difficulty, night awakenings, daytime drowsiness", signal: "High overnight PPG HR, IMU rolls > 12/night, daytime naps", warn: "Sustained < 5h → escalate immediately" },
+  { nm: "Sundowning",  desc: "Evening confusion exacerbation, agitation episodes",    signal: "Anomalous 15–19h EDA/HR + IMU restlessness",                       warn: "Light therapy + environment adjustment can mitigate" },
+  { nm: "Wandering",   desc: "Aimless roaming, elopement risk",                       signal: "Long aimless GPS / IMU displacement, night-time outings",           warn: "High-risk patients need GPS tracking + door alarms" }
+];
+const BPSD_LEVEL_EN = { ok: "normal", warn: "watch", bad: "high risk" };
+
+
 // ===== MIND 真实数据源 =====
 const MIND_BASE = "https://raw.githubusercontent.com/Jewelina95/ad-mind-pipeline/main/data_v2";
 const MIND_PATIENTS_META = {
@@ -1230,7 +1429,7 @@ function renderRealtimeBoard(id) {
           <div class="ch-card" data-ch="${c.id}">
             <div class="ch-name">
               <span>${c.id}</span>
-              <span class="ch-tag">${c.short}</span>
+              <span class="ch-tag">${tr(c.short)}</span>
             </div>
             <div class="ch-val" id="val-${c.id}">— <small>${c.unit}</small></div>
             <svg class="ch-wave" viewBox="0 0 240 36" preserveAspectRatio="none">
@@ -2117,7 +2316,7 @@ function selectPatient(id) {
     return `<div class="cad ${c.level}" onclick="openCadenceModal('${k}','${p.id}')">
       <div class="ic">${k==='5min'?'⚡':k==='1h'?'⏱':k==='1d'?'📅':k==='7d'?'📊':'📈'}</div>
       <div class="name">${k} ${en ? 'window' : '窗口'}</div>
-      <div class="v">${c.v}</div>
+      <div class="v">${tr(c.v)}</div>
     </div>`;
   }).join('');
 
@@ -2125,11 +2324,11 @@ function selectPatient(id) {
     const m = p.metrics[k];
     return `
       <div class="modal-block" onclick="openMetricModal('${k}','${p.id}')">
-        <h4>${m.icon} ${m.name}</h4>
+        <h4>${m.icon} ${tr(m.name)}</h4>
         ${m.rows.map(r => `
           <div class="row">
-            <span class="k">${r[0]}</span>
-            <span class="v ${r[2]||''}" title="${r[3]||''}">${r[1]}</span>
+            <span class="k">${tr(r[0])}</span>
+            <span class="v ${r[2]||''}" title="${tr(r[3]||'')}">${tr(r[1])}</span>
           </div>
         `).join('')}
         <div class="src">📚 ${m.src}</div>
@@ -2137,16 +2336,22 @@ function selectPatient(id) {
     `;
   }).join('');
 
-  const reasonHtml = p.reasoning.map((r, i) => `
+  // Reasoning chain: prefer EN overlay if present
+  const reasonOverlay = (PATIENTS_EN[p.id] && PATIENTS_EN[p.id].reasoning) || [];
+  const reasonHtml = p.reasoning.map((r, i) => {
+    const ovr = en && reasonOverlay[i] ? reasonOverlay[i] : null;
+    const title = ovr ? ovr.title : r.title;
+    const body  = ovr ? ovr.body  : r.body;
+    return `
     <div class="reason-step ${r.type==='warn'?'warn':''}">
       <span class="num">${i+1}</span>
-      <span class="title">${r.title}</span>
-      <div class="body">${r.body}</div>
+      <span class="title">${title}</span>
+      <div class="body">${body}</div>
       <div class="cite">
         ${r.cites.map(c => `<a href="${c[1]||'#'}" ${c[1]?'target="_blank"':''}>${c[0]}</a>`).join('')}
       </div>
     </div>
-  `).join('');
+  `;}).join('');
 
   const bpsdLabelEN = ['Agitation','Anxiety','Apathy','Depression','Sleep','Sundowning','Wandering'];
   const bpsdLevelText = (lv) => lv==='ok' ? (en?'normal':'正常') : lv==='warn' ? (en?'watch':'关注') : (en?'high risk':'高风险');
@@ -2154,12 +2359,13 @@ function selectPatient(id) {
     <div class="bpsd-cell lv-${b[1]}" onclick="openBpsdModal(${idx},'${p.id}')">
       <div class="nm">${en ? bpsdLabelEN[idx] : b[0]}</div>
       <div class="lv">${bpsdLevelText(b[1])}</div>
-      <div class="nb">${b[2]}</div>
+      <div class="nb">${tr(b[2])}</div>
     </div>
   `).join('');
 
+  const enAlertText = (en && PATIENTS_EN[p.id] && PATIENTS_EN[p.id].alertText) || p.alertText;
   const alertHtml = p.alert
-    ? `<div class="alert-banner">${p.alertText}</div>`
+    ? `<div class="alert-banner">${enAlertText}</div>`
     : `<div class="alert-banner ok">✅ ${en ? 'No acute alerts; routine monitoring active.' : '当前无急性预警，常规监测中'}</div>`;
 
   // MMSE sparkline
@@ -2174,13 +2380,14 @@ function selectPatient(id) {
   const lastX = sw, lastY = sh - ((sd[sd.length-1] - minV) / (maxV - minV)) * sh;
 
   const main = document.getElementById('mainPanel');
-  const sex = en && p.sex === '女' ? 'F' : en && p.sex === '男' ? 'M' : p.sex;
+  const sex = tr(p.sex);
+  const pname = tr(p.name);
   const ageStr = en ? `${p.age}y` : `${p.age}岁`;
   const onGloveLabel = en ? 'Glove since' : '戴手套自';
   main.innerHTML = `
     <div class="patient-bar">
       <div>
-        <div class="pname">${p.name}</div>
+        <div class="pname">${pname}</div>
         <div class="pmeta">${p.id} · ${ageStr} ${sex} · ${onGloveLabel} ${p.onGloveSince}</div>
       </div>
       <div class="stat">
@@ -2224,7 +2431,7 @@ function selectPatient(id) {
           <div class="ch-card ${getChFlagClass(p.sensorProfile, c.id)}" data-ch="${c.id}">
             <div class="ch-name">
               <span>${c.id}</span>
-              <span class="ch-tag ${getChFlagClass(p.sensorProfile, c.id)==='flag-alert'?'alert':''}">${c.short}</span>
+              <span class="ch-tag ${getChFlagClass(p.sensorProfile, c.id)==='flag-alert'?'alert':''}">${tr(c.short)}</span>
             </div>
             <div class="ch-val" id="val-${c.id}">— <small>${c.unit}</small></div>
             <svg class="ch-wave" viewBox="0 0 240 36" preserveAspectRatio="none">
@@ -2409,22 +2616,29 @@ const CADENCE_DETAILS = {
     output:"阶段转化提醒 → 建议 PET / 血液 p-tau217", citeWiki:"ad_staging"}
 };
 function openCadenceModal(k, pid) {
-  const d = CADENCE_DETAILS[k];
+  const d  = CADENCE_DETAILS[k];
+  const en = isEN();
+  const dE = en ? CADENCE_DETAILS_EN[k] : null;
+  const name      = dE ? dE.name      : d.name;
+  const purpose   = dE ? dE.purpose   : d.purpose;
+  const measures  = dE ? dE.measures  : d.measures;
+  const triggers  = dE ? dE.triggers  : d.triggers;
+  const output    = dE ? dE.output    : d.output;
   const p = PATIENTS[pid];
   const c = p.cadence[k];
   const html = `
-    <h3>${d.ic} ${d.name} · 当前 <span class="badge-inline ${c.level==='alert'?'b-bad':c.level==='warn'?'b-warn':'b-ok'}">${c.v}</span></h3>
+    <h3>${d.ic} ${name} · ${en ? 'current' : '当前'} <span class="badge-inline ${c.level==='alert'?'b-bad':c.level==='warn'?'b-warn':'b-ok'}">${tr(c.v)}</span></h3>
     <div class="kv">
-      <span class="k">用途</span><span>${d.purpose}</span>
-      <span class="k">输出</span><span>${d.output}</span>
+      <span class="k">${en ? 'Purpose' : '用途'}</span><span>${purpose}</span>
+      <span class="k">${en ? 'Output'  : '输出'}</span><span>${output}</span>
     </div>
-    <h3>这个窗口在测什么</h3>
-    <ul>${d.measures.map(m => `<li>${m}</li>`).join('')}</ul>
-    <h3>触发规则</h3>
-    <ul>${d.triggers.map(t => `<li>${t}</li>`).join('')}</ul>
-    <div class="cite-row">📚 KB 引用：<a href="https://jewelina95.github.io/ad-wiki-pages/wiki/concepts/${d.citeWiki}.md" target="_blank">wiki/concepts/${d.citeWiki}.md ↗</a></div>
+    <h3>${en ? 'What this window measures' : '这个窗口在测什么'}</h3>
+    <ul>${measures.map(m => `<li>${m}</li>`).join('')}</ul>
+    <h3>${en ? 'Trigger rules' : '触发规则'}</h3>
+    <ul>${triggers.map(tg => `<li>${tg}</li>`).join('')}</ul>
+    <div class="cite-row">📚 ${en ? 'KB reference:' : 'KB 引用：'}<a href="https://jewelina95.github.io/ad-wiki-pages/wiki/concepts/${d.citeWiki}.md" target="_blank">wiki/concepts/${d.citeWiki}.md ↗</a></div>
   `;
-  openModal(`${d.ic} ${d.name} · ${p.name}`, html);
+  openModal(`${d.ic} ${name} · ${tr(p.name)}`, html);
 }
 
 // ----- 多模态指标详情 -----
@@ -2467,29 +2681,37 @@ const METRIC_DETAILS = {
     refs:[["TAUKADIAL 2024", "中文 AUC 0.78-0.85"], ["ADReSS baseline"], ["wiki/concepts/voice", "https://jewelina95.github.io/ad-wiki-pages/wiki/concepts/voice_acoustic_linguistic.md"]]}
 };
 function openMetricModal(k, pid) {
-  const d = METRIC_DETAILS[k];
+  const d  = METRIC_DETAILS[k];
+  const en = isEN();
+  const dE = en ? METRIC_DETAILS_EN[k] : null;
+  const name        = dE ? dE.name       : d.name;
+  const rationale   = dE ? dE.rationale  : d.rationale;
+  const thresholds  = dE ? dE.thresholds : d.thresholds;
   const p = PATIENTS[pid];
   const m = p.metrics[k];
+  const flagText = (f) => en
+    ? (f==='flag-bad' ? 'abnormal' : f==='flag-warn' ? 'deviating' : 'normal')
+    : (f==='flag-bad' ? '异常'    : f==='flag-warn' ? '偏离'      : '正常');
   const html = `
-    <h3>${m.icon} ${d.name} · ${p.name} 当前</h3>
+    <h3>${m.icon} ${name} · ${tr(p.name)} ${en ? 'current' : '当前'}</h3>
     <table>
-      <tr><th>指标</th><th>当前值</th><th>解读</th></tr>
+      <tr><th>${en ? 'Metric' : '指标'}</th><th>${en ? 'Current value' : '当前值'}</th><th>${en ? 'Interpretation' : '解读'}</th></tr>
       ${m.rows.map((r, i) => `
         <tr>
-          <td>${r[0]}</td>
-          <td><code>${r[1]}</code> ${r[2]?`<span class="badge-inline ${r[2]==='flag-bad'?'b-bad':r[2]==='flag-warn'?'b-warn':'b-ok'}">${r[2]==='flag-bad'?'异常':r[2]==='flag-warn'?'偏离':'正常'}</span>`:''}</td>
-          <td>${d.thresholds[i] ? d.thresholds[i][1] : ''}</td>
+          <td>${tr(r[0])}</td>
+          <td><code>${tr(r[1])}</code> ${r[2]?`<span class="badge-inline ${r[2]==='flag-bad'?'b-bad':r[2]==='flag-warn'?'b-warn':'b-ok'}">${flagText(r[2])}</span>`:''}</td>
+          <td>${thresholds[i] ? thresholds[i][1] : ''}</td>
         </tr>
       `).join('')}
     </table>
-    <h3>临床原理</h3>
-    <p>${d.rationale}</p>
-    <h3>引用</h3>
+    <h3>${en ? 'Clinical rationale' : '临床原理'}</h3>
+    <p>${rationale}</p>
+    <h3>${en ? 'References' : '引用'}</h3>
     <ul>
       ${d.refs.map(r => `<li>${r[1] && r[1].startsWith('http') ? `<a href="${r[1]}" target="_blank">${r[0]} ↗</a>` : r[0] + (r[1] ? ' — ' + r[1] : '')}</li>`).join('')}
     </ul>
   `;
-  openModal(`${m.icon} ${d.name} · 详情`, html);
+  openModal(`${m.icon} ${name} · ${en ? 'Details' : '详情'}`, html);
 }
 
 // ----- BPSD 详情 -----
@@ -2503,38 +2725,69 @@ const BPSD_DETAILS = [
   { nm:"游荡", desc:"无目的徘徊、走失风险", signal:"GPS / IMU 长时间无目的位移、夜间外出", warn:"高风险患者需 GPS 定位 + 门禁", wiki:"bpsd_wandering"}
 ];
 function openBpsdModal(idx, pid) {
-  const d = BPSD_DETAILS[idx];
+  const en = isEN();
+  const d  = BPSD_DETAILS[idx];
+  const dE = en ? BPSD_DETAILS_EN[idx] : null;
+  const nm     = dE ? dE.nm     : d.nm;
+  const desc   = dE ? dE.desc   : d.desc;
+  const signal = dE ? dE.signal : d.signal;
+  const warn   = dE ? dE.warn   : d.warn;
   const p = PATIENTS[pid];
   const b = p.bpsd[idx];
-  const lvText = b[1]==='ok'?'正常':b[1]==='warn'?'关注':'高风险';
+  const lvText = en
+    ? (b[1]==='ok' ? 'normal' : b[1]==='warn' ? 'watch' : 'high risk')
+    : (b[1]==='ok' ? '正常'   : b[1]==='warn' ? '关注'   : '高风险');
+  const eventNarr = en
+    ? (b[1]==='bad' ? '8 prominent events detected, clustering 16:30–18:00' : b[1]==='warn' ? '2–3 mild events detected' : 'no notable events')
+    : (b[1]==='bad' ? '检测到 8 次明显事件，集中在 16:30-18:00 时段' : b[1]==='warn' ? '检测到 2-3 次轻度事件' : '无明显事件');
   const html = `
-    <h3>${d.nm} · 当前 <span class="badge-inline ${b[1]==='bad'?'b-bad':b[1]==='warn'?'b-warn':'b-ok'}">${lvText} (${b[2]})</span></h3>
+    <h3>${nm} · ${en ? 'current' : '当前'} <span class="badge-inline ${b[1]==='bad'?'b-bad':b[1]==='warn'?'b-warn':'b-ok'}">${lvText} (${tr(b[2])})</span></h3>
     <div class="kv">
-      <span class="k">临床表现</span><span>${d.desc}</span>
-      <span class="k">传感器特征</span><span>${d.signal}</span>
-      <span class="k">关键提醒</span><span>${d.warn}</span>
+      <span class="k">${en ? 'Clinical presentation' : '临床表现'}</span><span>${desc}</span>
+      <span class="k">${en ? 'Sensor signature'      : '传感器特征'}</span><span>${signal}</span>
+      <span class="k">${en ? 'Key alert'             : '关键提醒'}</span><span>${warn}</span>
     </div>
-    <h3>本患者最近 30d ${d.nm} 事件</h3>
-    <p style="color:var(--muted)">${b[1]==='bad' ? '检测到 8 次明显事件，集中在 16:30-18:00 时段' : b[1]==='warn' ? '检测到 2-3 次轻度事件' : '无明显事件'}</p>
-    <div class="cite-row">📚 <a href="https://jewelina95.github.io/ad-wiki-pages/wiki/concepts/${d.wiki}.md" target="_blank">wiki/concepts/${d.wiki}.md ↗</a> · NPI 量表对应维度</div>
+    <h3>${en ? `Last 30 days · ${nm} events for this patient` : `本患者最近 30d ${nm} 事件`}</h3>
+    <p style="color:var(--muted)">${eventNarr}</p>
+    <div class="cite-row">📚 <a href="https://jewelina95.github.io/ad-wiki-pages/wiki/concepts/${d.wiki}.md" target="_blank">wiki/concepts/${d.wiki}.md ↗</a> · ${en ? 'NPI scale dimension' : 'NPI 量表对应维度'}</div>
   `;
-  openModal(`${d.nm} · ${p.name}`, html);
+  openModal(`${nm} · ${tr(p.name)}`, html);
 }
 
 // ----- 周报 / 干预 / 转诊 弹窗 -----
 function openReportModal(kind, pid) {
+  const en = isEN();
   const p = PATIENTS[pid];
   const today = new Date().toISOString().slice(0,10);
+  const pname = tr(p.name);
+  const sex   = tr(p.sex);
   let title, html;
 
   if (kind === 'clinical') {
-    title = `📋 临床周报 · ${p.name}`;
+    title = en ? `📋 Clinical weekly report · ${pname}` : `📋 临床周报 · ${pname}`;
+    const reasonOverlay = (PATIENTS_EN[p.id] && PATIENTS_EN[p.id].reasoning) || [];
+    const reasonLines = p.reasoning.map((r, i) => {
+      const ovr = en && reasonOverlay[i] ? reasonOverlay[i] : null;
+      const t   = ovr ? ovr.title : r.title;
+      const b   = ovr ? ovr.body  : r.body;
+      return `  ${i+1}. ${t}\n     ${b}`;
+    }).join('\n\n');
+    const bpsdLines = p.bpsd.map((b, idx) => {
+      const nm = en ? ['Agitation','Anxiety','Apathy','Depression','Sleep','Sundowning','Wandering'][idx] : b[0];
+      return `  ${nm.padEnd(12,' ')}: ${b[1].toUpperCase().padEnd(5,' ')} (${tr(b[2])})`;
+    }).join('\n');
+    const recs = en
+      ? `${p.stage === 'MCI' || p.stage === 'Mild' ? '  ▸ Next step: plasma p-tau217 + neurology consult\n  ▸ Consider amyloid PET to confirm AT(N) positivity\n' : ''}${p.alert ? '  ▸ Acute BPSD risk: 8 interventions triggered this week\n  ▸ ARIA monitoring during lecanemab\n' : ''}  ▸ Continue weekly longitudinal monitoring; watch the gait / voice / HRV triad\n  ▸ Next review: ${new Date(Date.now()+7*86400000).toISOString().slice(0,10)}`
+      : `${p.stage === 'MCI' || p.stage === 'Mild' ? '  ▸ 建议下一步：血液 p-tau217 + 神经内科会诊\n  ▸ 考虑做 amyloid PET 确认 AT(N) 阳性\n' : ''}${p.alert ? '  ▸ 急性 BPSD 风险：本周触发 8 次干预\n  ▸ 评估 Lecanemab 期间 ARIA 监测\n' : ''}  ▸ 继续每周纵向监测，关注步态/语音/HRV 三联指标\n  ▸ 下次评估：${new Date(Date.now()+7*86400000).toISOString().slice(0,10)}`;
+    const footer = en
+      ? '  Report generated from multimodal sensor fusion + clinical KB\n  Does not replace gold-standard diagnosis (PET / CSF / plasma p-tau217)'
+      : '  报告基于 multi-modal sensor fusion + clinical KB\n  不替代金标准诊断 (PET / CSF / 血液 p-tau217)';
     html = `
       <pre style="white-space:pre-wrap">CLINICAL WEEKLY REPORT
 ==============================================
-Patient: ${p.name} (${p.id}) · ${p.age}岁 ${p.sex}
+Patient: ${pname} (${p.id}) · ${en ? `${p.age}y` : `${p.age}岁`} ${sex}
 Reporting period: ${today} (last 7 days)
-Glove worn: ${p.onGloveSince}
+Glove worn since: ${p.onGloveSince}
 Generated by: Unified Clinical Agent (Claude)
 ==============================================
 
@@ -2548,54 +2801,85 @@ KEY METRICS (week mean ± SD)
   Gait speed   : ${p.metrics.gait.rows[0][1]}
   Stride var   : ${p.metrics.gait.rows[2][1]}
   EDA SCL      : ${p.metrics.eda.rows[0][1]}
-  Speech rate  : ${p.metrics.voice.rows[0][1]}
+  Speech rate  : ${tr(p.metrics.voice.rows[0][1])}
   Pause ratio  : ${p.metrics.voice.rows[1][1]}
 
 REASONING CHAIN
-${p.reasoning.map((r, i) => `  ${i+1}. ${r.title}\n     ${r.body}`).join('\n\n')}
+${reasonLines}
 
 BPSD WEEKLY SCORECARD
-${p.bpsd.map(b => `  ${b[0].padEnd(4,' ')}: ${b[1].toUpperCase().padEnd(5,' ')} (${b[2]})`).join('\n')}
+${bpsdLines}
 
 RECOMMENDATIONS
-${p.stage === 'MCI' || p.stage === 'Mild' ? '  ▸ 建议下一步：血液 p-tau217 + 神经内科会诊\n  ▸ 考虑做 amyloid PET 确认 AT(N) 阳性\n' : ''}${p.alert ? '  ▸ 急性 BPSD 风险：本周触发 8 次干预\n  ▸ 评估 Lecanemab 期间 ARIA 监测\n' : ''}  ▸ 继续每周纵向监测，关注步态/语音/HRV 三联指标
-  ▸ 下次评估：${new Date(Date.now()+7*86400000).toISOString().slice(0,10)}
+${recs}
 
 FOOTER
-  报告基于 multi-modal sensor fusion + clinical KB
-  不替代金标准诊断 (PET / CSF / 血液 p-tau217)</pre>
-      <div class="cite-row">📚 报告模板见 <a href="https://jewelina95.github.io/ad-wiki-pages/wiki/agents/care_management_agent.md" target="_blank">care_management_agent ↗</a></div>
+${footer}</pre>
+      <div class="cite-row">📚 ${en ? 'Template:' : '报告模板见'} <a href="https://jewelina95.github.io/ad-wiki-pages/wiki/agents/care_management_agent.md" target="_blank">care_management_agent ↗</a></div>
     `;
   } else if (kind === 'family') {
-    title = `📄 家属周报 · ${p.name}`;
-    const stage = p.stage === 'Healthy' ? '健康' : p.stage === 'MCI' ? '轻度认知下降' : p.stage === 'Mild' ? '轻度阿尔兹海默' : '中度阿尔兹海默';
+    title = en ? `📄 Family weekly report · ${pname}` : `📄 家属周报 · ${pname}`;
+    const stageZh = p.stage === 'Healthy' ? '健康' : p.stage === 'MCI' ? '轻度认知下降' : p.stage === 'Mild' ? '轻度阿尔兹海默' : '中度阿尔兹海默';
+    const stageEn = p.stage === 'Healthy' ? 'healthy' : p.stage === 'MCI' ? 'mild cognitive impairment' : p.stage === 'Mild' ? 'mild Alzheimer' : 'moderate Alzheimer';
+    const stage   = en ? stageEn : stageZh;
     const lightColor = p.alert ? '🔴' : (p.stage === 'MCI' || p.stage === 'Mild') ? '🟡' : '🟢';
+    const overall = en
+      ? (p.alert ? 'needs attention' : (p.stage==='MCI'||p.stage==='Mild') ? 'mostly stable, a few things to watch' : 'doing well')
+      : (p.alert ? '需要注意' : (p.stage==='MCI'||p.stage==='Mild') ? '基本稳定，但有几点要关注' : '状态良好');
+    const sleepStr = p.cadence['1d'].v.includes('h') ? p.cadence['1d'].v.replace('睡眠 ','') : '6.5h';
+    const sleepCmt = en
+      ? (p.cadence['1d'].level==='ok' ? 'OK' : 'short')
+      : (p.cadence['1d'].level==='ok' ? 'OK' : '偏少');
+    const activity = en
+      ? (p.cadence['7d'].level==='ok' ? 'normal' : 'reduced')
+      : (p.cadence['7d'].level==='ok' ? '正常'   : '有所减少');
+    const mood = en
+      ? (p.alert ? 'a few notable swings this week' : 'relatively steady')
+      : (p.alert ? '本周有几次明显波动' : '相对平稳');
     html = `
-      <h3>${lightColor} 这一周整体：${p.alert ? '需要注意' : (p.stage==='MCI'||p.stage==='Mild') ? '基本稳定，但有几点要关注' : '状态良好'}</h3>
+      <h3>${lightColor} ${en ? `Overall this week: ${overall}` : `这一周整体：${overall}`}</h3>
       <div class="kv">
-        <span class="k">本周阶段</span><span>${stage}</span>
-        <span class="k">睡眠</span><span>平均 ${p.cadence['1d'].v.includes('h') ? p.cadence['1d'].v.replace('睡眠 ','') : '6.5h'}（${p.cadence['1d'].level==='ok'?'OK':'偏少'}）</span>
-        <span class="k">活动</span><span>${p.cadence['7d'].level==='ok'?'正常':'有所减少'}</span>
-        <span class="k">情绪</span><span>${p.alert ? '本周有几次明显波动' : '相对平稳'}</span>
+        <span class="k">${en ? 'Stage this week' : '本周阶段'}</span><span>${stage}</span>
+        <span class="k">${en ? 'Sleep' : '睡眠'}</span><span>${en ? `avg ${sleepStr} (${sleepCmt})` : `平均 ${sleepStr}（${sleepCmt}）`}</span>
+        <span class="k">${en ? 'Activity' : '活动'}</span><span>${activity}</span>
+        <span class="k">${en ? 'Mood' : '情绪'}</span><span>${mood}</span>
       </div>
-      <h3>建议家属做的事</h3>
+      <h3>${en ? 'What family can do' : '建议家属做的事'}</h3>
       <ul>
-        ${p.alert ? '<li>傍晚 4-7 点尽量陪伴，避免环境过度刺激</li>' : ''}
-        ${p.stage==='MCI' || p.stage==='Mild' ? '<li>多和长辈聊天、回忆往事，鼓励参与日常事务</li>' : ''}
-        <li>记得提醒按时吃药、定时活动</li>
-        <li>下次体检时把这份周报给医生看</li>
+        ${p.alert ? `<li>${en ? 'Stay with them between 4–7 pm; minimise environmental over-stimulation' : '傍晚 4-7 点尽量陪伴，避免环境过度刺激'}</li>` : ''}
+        ${p.stage==='MCI' || p.stage==='Mild' ? `<li>${en ? 'Chat with them often, reminisce, encourage daily-task involvement' : '多和长辈聊天、回忆往事，鼓励参与日常事务'}</li>` : ''}
+        <li>${en ? 'Keep medication and activity reminders on time' : '记得提醒按时吃药、定时活动'}</li>
+        <li>${en ? "Bring this report to the next physician visit" : '下次体检时把这份周报给医生看'}</li>
       </ul>
-      <h3>什么时候需要立刻联系医生</h3>
+      <h3>${en ? 'When to contact the doctor immediately' : '什么时候需要立刻联系医生'}</h3>
       <ul>
-        <li>突然加重的混乱 / 攻击行为</li>
-        <li>连续 2 天以上几乎不睡 / 不吃</li>
-        <li>跌倒、失去方向感、走失</li>
+        <li>${en ? 'Sudden worsening confusion / aggressive behaviour' : '突然加重的混乱 / 攻击行为'}</li>
+        <li>${en ? 'Hardly sleeping or eating for 2+ days in a row' : '连续 2 天以上几乎不睡 / 不吃'}</li>
+        <li>${en ? 'Falls, disorientation, getting lost' : '跌倒、失去方向感、走失'}</li>
       </ul>
-      <div class="cite-row">这份报告由智能手套自动生成 · 仅供日常参考 · 不替代医生诊断</div>
+      <div class="cite-row">${en ? 'Auto-generated by the smart glove · for daily reference only · does not replace a clinical diagnosis' : '这份报告由智能手套自动生成 · 仅供日常参考 · 不替代医生诊断'}</div>
     `;
   } else if (kind === 'goldstandard') {
-    title = `🩺 金标准检查推荐 · ${p.name}`;
-    html = `
+    title = en ? `🩺 Gold-standard workup recommendation · ${pname}` : `🩺 金标准检查推荐 · ${pname}`;
+    html = en ? `
+      <h3>Why we recommend the gold standard</h3>
+      <p>The multimodal indicators already place this patient at <strong>${p.stage}</strong> (confidence ${(p.confidence*100).toFixed(0)}%), but the glove system makes a <strong>clinical inference</strong>, not a biological confirmation. The lecanemab / donanemab treatment window is only effective for MCI / mild AD and requires amyloid-positive confirmation.</p>
+      <h3>Recommended workup (in priority order)</h3>
+      <table>
+        <tr><th>Test</th><th>Cost</th><th>Invasiveness</th><th>Diagnostic value</th></tr>
+        <tr><td>Plasma p-tau217</td><td>~¥1,500</td><td>blood draw</td><td>PPV for amyloid+ ~85%</td></tr>
+        <tr><td>Amyloid PET</td><td>~¥6,000–10,000</td><td>IV tracer</td><td>gold standard</td></tr>
+        <tr><td>CSF Aβ42/40 + p-tau</td><td>~¥3,000</td><td>LP</td><td>gold standard</td></tr>
+        <tr><td>Hippocampal MRI</td><td>~¥1,200</td><td>none</td><td>supportive</td></tr>
+      </table>
+      <h3>How to refer</h3>
+      <ul>
+        <li>Export this patient's 30-day longitudinal data → PDF report (using the weekly-report template)</li>
+        <li>Refer to neurology / memory clinic</li>
+        <li>Bring: glove report + prior MMSE/MoCA records + medication list</li>
+      </ul>
+      <div class="cite-row">📚 <a href="https://jewelina95.github.io/ad-wiki-pages/wiki/concepts/atn_framework.md" target="_blank">AT(N) framework ↗</a> · Jack 2024 revised criteria</div>
+    ` : `
       <h3>为什么推荐做金标准</h3>
       <p>本患者综合多模态指标已达到 <strong>${p.stage}</strong>（置信度 ${(p.confidence*100).toFixed(0)}%），但手套系统是<strong>临床推断</strong>，不能替代生物学确诊。Lecanemab / Donanemab 治疗窗口仅对 MCI / 轻度 AD 有效，需要 amyloid 阳性确认。</p>
       <h3>推荐流程（按优先顺序）</h3>
@@ -2615,8 +2899,28 @@ FOOTER
       <div class="cite-row">📚 <a href="https://jewelina95.github.io/ad-wiki-pages/wiki/concepts/atn_framework.md" target="_blank">AT(N) 框架 ↗</a> · Jack 2024 修订标准</div>
     `;
   } else if (kind === 'intervention') {
-    title = `🎵 干预方案 · ${p.name}`;
-    html = `
+    title = en ? `🎵 Intervention plan · ${pname}` : `🎵 干预方案 · ${pname}`;
+    const enAlertTxt = (en && PATIENTS_EN[p.id] && PATIENTS_EN[p.id].alertText) || p.alertText;
+    html = en ? `
+      <h3>Current acute event</h3>
+      <p style="color:var(--red)"><strong>${enAlertTxt || 'none'}</strong></p>
+      <h3>Execute now (in order)</h3>
+      <ol>
+        <li><strong>Music therapy</strong>: play patient-preferred tracks (1950s songs) through the glove speaker · 30 min · monitor whether EDA subsides</li>
+        <li><strong>Voice-guided breathing</strong>: 5-minute 4-7-8 technique</li>
+        <li><strong>Notify primary caregiver</strong>: SMS + app push, prompt to be present</li>
+        <li><strong>Environmental adjustment</strong>: dim the lights, turn off TV / strong stimuli</li>
+      </ol>
+      <h3>Re-check at 30 minutes</h3>
+      <ul>
+        <li>EDA SCL back within ±20% of baseline?</li>
+        <li>HR < 80 bpm?</li>
+        <li>If not resolved → escalate to in-person caregiver care + consider non-emergency medical consultation</li>
+      </ul>
+      <h3>Recent pattern</h3>
+      <p>This patient has had 8 similar events in the past 30 days, clustering 16:30–18:00 (sundowning window). Recommend prevention in this window in advance (walks, family presence, scheduled nostalgic programmes).</p>
+      <div class="cite-row">📚 <a href="https://jewelina95.github.io/ad-wiki-pages/wiki/agents/intervention_agent.md" target="_blank">intervention_agent ↗</a> · Iaboni 2022 BPSD intervention evidence</div>
+    ` : `
       <h3>当前急性事件</h3>
       <p style="color:var(--red)"><strong>${p.alertText || '无'}</strong></p>
       <h3>立即执行（按顺序）</h3>

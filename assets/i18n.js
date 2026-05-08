@@ -7,7 +7,7 @@
 (function () {
   const STRINGS = {
     /* --------- shared brand bar / nav --------- */
-    "brand.glove":          { zh: "AD 智能手套", en: "AD Smart Glove" },
+    "brand.glove":          { zh: "AD 多智能体手套", en: "AD Multi-Agent Glove" },
     "brand.tagline":        { zh: "I-THREAD · 多模态可穿戴监测", en: "I-THREAD · Multimodal Wearable Monitoring" },
     "nav.home":             { zh: "首页",        en: "Home" },
     "nav.patient":          { zh: "患者端",      en: "Patient" },
@@ -18,8 +18,8 @@
     "lang.toggle.aria":     { zh: "切换语言",     en: "Switch language" },
 
     /* --------- index.html --------- */
-    "index.title":          { zh: "AD 智能手套 · Dashboard 入口", en: "AD Smart Glove · Dashboard" },
-    "index.h1":             { zh: "AD 智能手套 · Dashboard", en: "AD Smart Glove · Dashboard" },
+    "index.title":          { zh: "AD 多智能体手套 · Dashboard 入口", en: "AD Multi-Agent Glove · Dashboard" },
+    "index.h1":             { zh: "AD 多智能体手套 · Dashboard", en: "AD Multi-Agent Glove · Dashboard" },
     "index.hero":           { zh: "EDA + PPG + IMU + 麦克风的可穿戴手套，搭配多智能体推理引擎，对阿尔兹海默症患者做实时监测与干预。下面分别是患者端和医生端入口。",
                               en: "An EDA + PPG + IMU + microphone wearable glove paired with a multi-agent reasoning engine for real-time monitoring and intervention in Alzheimer's disease. The patient and clinician portals are below." },
     "index.demo":           { zh: "DEMO", en: "DEMO" },
@@ -57,8 +57,8 @@
                               en: "For the clinical knowledge base, agent architecture, sensor design, and synthetic-data calibration, see" },
     "index.aux.link":       { zh: "AD Wiki ↗", en: "AD Wiki ↗" },
     "index.aux.tail":       { zh: "。当前页面为可视化原型，数据为脱敏 mock。", en: ". This page is a visual prototype; the data are de-identified mocks." },
-    "index.footer":         { zh: "AD 智能手套 · 多智能体监测系统 · 原型 v0.1 · 不可替代医生诊断",
-                              en: "AD Smart Glove · Multi-agent monitoring · Prototype v0.1 · Not a substitute for clinical diagnosis" },
+    "index.footer":         { zh: "AD 多智能体手套 · 多智能体监测系统 · 原型 v0.1 · 不可替代医生诊断",
+                              en: "AD Multi-Agent Glove · Multi-agent monitoring · Prototype v0.1 · Not a substitute for clinical diagnosis" },
 
     "index.modal.h":        { zh: "📡 实时面板需要本机运行", en: "📡 Realtime board runs locally" },
     "index.modal.lead":     { zh: "实时 ESP32 传感器数据是 React 应用 + FastAPI backend，无法部署到静态 GitHub Pages。需要在你电脑上跑起来：",
@@ -73,7 +73,7 @@
     "index.modal.close":    { zh: "关闭", en: "Close" },
 
     /* --------- patient.html --------- */
-    "patient.title":        { zh: "患者端 · AD 智能手套", en: "Patient · AD Smart Glove" },
+    "patient.title":        { zh: "患者端 · AD 多智能体手套", en: "Patient · AD Multi-Agent Glove" },
     "patient.hero.h":       { zh: "今天状态很好", en: "You're doing well today" },
     "patient.hero.p":       { zh: "各项指标都在你正常范围内，继续保持。", en: "All readings are within your normal range — keep it up." },
     "patient.hero.ts":      { zh: "最近一次评估：今天 09:42（基于过去 24 小时数据）", en: "Last update: today 09:42 (based on the last 24 hours)" },
@@ -132,7 +132,7 @@
                                en: "Everything shown here comes from the glove and is for daily reference only — it does not replace a clinician's diagnosis. If you feel different for several days, tell your doctor." },
 
     /* --------- doctor.html — UI chrome --------- */
-    "doctor.title":         { zh: "医生端 · AD 智能手套", en: "Clinician · AD Smart Glove" },
+    "doctor.title":         { zh: "医生端 · AD 多智能体手套", en: "Clinician · AD Multi-Agent Glove" },
     "doctor.sidebar.h":     { zh: "患者列表 (4 案例)", en: "Patient list (4 cases)" },
     "doctor.sidebar.search":{ zh: "🔍 搜索 ID / 姓名", en: "🔍 Search ID / name" },
     "doctor.sidebar.upload":{ zh: "📤 上传你的 progression.csv", en: "📤 Upload your progression.csv" },

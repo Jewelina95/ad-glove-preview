@@ -37,6 +37,18 @@
   width: auto;
   display: block;
 }
+/* small gap between stacked logos */
+.brandbar-logos {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.brandbar-logos .logo-sep {
+  width: 1px;
+  height: 44px;
+  background: var(--border, #e2e8f0);
+}
 .brandbar-divider {
   width: 1px;
   height: 22px;
@@ -104,5 +116,7 @@
   .brandbar { padding: 10px 14px; gap: 12px; }
   .brandbar-product { font-size: 13px; }
   .brandbar-pills a { padding: 5px 10px; font-size: 12px; }
-  .brandbar-logo img { height: 44px; }
+  .brandbar-logo img { height: 40px; }
+  .brandbar-logos { gap: 10px; }
+  .brandbar-logos .logo-sep { height: 30px; }
 }
